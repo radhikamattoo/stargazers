@@ -1,0 +1,26 @@
+{
+  "name": "rm3485-final-project",
+  "version": "1.0.0",
+  "description": "Stargazer's Application",
+  "main": "app.js",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "express-handlebars": "^3.0.0",
+    "mongoose": "^4.4.11"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nyu-csci-ua-0480-010-spring-2016/rm3485-final-project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nyu-csci-ua-0480-010-spring-2016/rm3485-final-project/issues"
+  },
+  "homepage": "https://github.com/nyu-csci-ua-0480-010-spring-2016/rm3485-final-project#readme"
+}
