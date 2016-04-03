@@ -80,9 +80,9 @@ First draft schema:
 // An Exoplanet represents one object that a user can enter into
 //on of their lists
 //The below screenshot is an example of one of the exoplanets loaded from NASA's exoplanet archive
-
+```
 ![list create](documentation/exoplanets.png)
-
+```javascript
 //LIST
 //A List has a name, date created, and holds exoplanet objects
 var List = new mongoose.Schema({
