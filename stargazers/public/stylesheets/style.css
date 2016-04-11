@@ -1,0 +1,29 @@
+body{
+  text-align:center;
+  background-color: linen;
+  color: maroon;
+}
+img{
+  max-height: 300px;
+  max-width: 300px;
+}
+a:link {
+    color: red;
+    background-color: transparent;
+    text-decoration: none;
+}
+a:visited {
+    color: blue;
+    background-color: transparent;
+    text-decoration: none;
+}
+a:hover {
+    color: red;
+    background-color: transparent;
+    text-decoration: underline;
+}
+a:active {
+    color: pink;
+    background-color: transparent;
+    text-decoration: underline;
+}

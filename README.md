@@ -3,7 +3,7 @@
 
 ## Overview
 
-I'm personally obsessed with space; when I was younger, I'd love looking at planets and stars from a telescope in my backyard - why not make a web app that helps keep track of all your favorite exoplanet ?
+I'm personally obsessed with space; when I was younger, I'd love looking at planets and stars from a telescope in my backyard - why not make a web app that helps keep track of all your favorite exoplanet?
 
 A user can sign up and create a list of their favorite exoplanets by either entering their own information they've monitored or by querying an archive of ~ 2,000 confirmed exoplanets by NASA. If the user opts to enter their own information, the app will first crosscheck with the NASA archive to see if they're referencing a confirmed exoplanet, and will add the confirmed planet instead if there is a single match. If there's more than one match, the user can choose from the list of matching planets, or opt to make a new entry into their own observation list (the NASA archive won't be affected by this). This entry will be marked as a user exoplanet, rather than a confirmed NASA exoplanet.
 
@@ -53,7 +53,7 @@ There will be 3 Mongoose schemas
   * Inclination
   * Mass wrt Jupiter
   * Mass wrt Provenance
-  * Density **REQUIRED**
+  * Density 
   * TVVFlag
   * Kepler Field Flag
   * K2 Mission Flag
@@ -89,7 +89,7 @@ var List = new mongoose.Schema({
   user: {type: mongoose.Schema.Types.ObjectId, ref:'User'},
   name: {type: String, required: true},
   created: {type: Date, required: true},
-  planets: [exoplanet]
+  planets: [Exoplanet]
 });
 
 
