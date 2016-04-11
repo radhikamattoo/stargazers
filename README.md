@@ -53,7 +53,7 @@ There will be 3 Mongoose schemas
   * Inclination
   * Mass wrt Jupiter
   * Mass wrt Provenance
-  * Density 
+  * Density
   * TVVFlag
   * Kepler Field Flag
   * K2 Mission Flag
@@ -81,7 +81,7 @@ First draft schema:
 //on of their lists
 //The below screenshot is an example of one of the exoplanets loaded from NASA's exoplanet archive
 ```
-![list create](documentation/exoplanets.png)
+![list create](stargazers/documentation/exoplanets.png)
 ```javascript
 //LIST
 //A List has a name, date created, and holds exoplanet objects
@@ -119,7 +119,7 @@ var User = {
 
 ## Site Map
 
-![list create](documentation/SiteMap.png)
+![list create](stargazers/documentation/SiteMap.png)
 
 NOTE: I made this before thinking of the option of editing an exoplanet's info;
 that would be on the page Add/Delete Planet (POST Request). Obviously a user wouldn't be able to change any NASA archive exoplanet info.
@@ -140,8 +140,8 @@ As a user, as time goes by and I observe my exoplanet more, I want to update/cha
 
 Note: Very basic, doesn't show all functionality the actual app will have.
 
-![list create](documentation/UserList.png)
-![list create](documentation/UserProfile.png)
+![list create](stargazers/documentation/UserList.png)
+![list create](stargazers/documentation/UserProfile.png)
 
 
 ## Research Topics
