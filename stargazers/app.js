@@ -3,7 +3,9 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-
+var passport = require('passport');
+var FacebookStrategy = require('passport-facebook').Strategy;
+var LocalStrategy = require('passport-local').Strategy;
 
 //set up sessions
 var sessionOptions = {
@@ -14,6 +16,10 @@ var sessionOptions = {
 
 //print in database code
 require('./db.js');
+//get User for passport authentication
+var mongoose = require('mongoose');
+var User = mongoose.model('User');
+
 
 var login = require('./routes/login');
 var user = require('./routes/user');
@@ -29,6 +35,51 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session(sessionOptions));
+
+//CONFIGURE PASSPORT FOR USER AUTHENTICATION
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+//regular user-login
+passport.use(new LocalStrategy(
+  function(username, password, done) {
+    User.findOne({ username: username }, function(err, user) {
+      if (err) { return done(err); }
+      if (!user) {
+        return done(null, false, { message: 'Incorrect username.' });
+      }
+      if (user.password !== password) {
+        return done(null, false, { message: 'Incorrect password.' });
+      }
+      return done(null, user);
+    });
+  }
+));
+
+//facebook login
+passport.use(new FacebookStrategy({
+    clientID: 1560296170929426,
+    clientSecret: '226542e3a1d276aab0759b3e23085a81',
+    callbackURL: "http://localhost:3000/auth/facebook/callback",
+		profileFields: ['id','emails', 'first_name', 'last_name', 'displayName']
+  },
+  function(accessToken, refreshToken, profile, done) {
+    //do some req.session shit?
+    var name = profile.displayName;
+    User.findOrCreate({name:name}, function(err, user, created){
+      console.log(user.name + " " + user.username);
+    });
+  }
+));
+
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+  done(null, user);
+});
 
 app.use('/', login);
 app.use('/', user);

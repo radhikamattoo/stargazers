@@ -1,9 +1,8 @@
 <h1>Stargazer's Collection</h1>
-<p>Welcome to Stargazer's Collection!</p>
+<h4>Welcome!</h4>
 {{#if newUser}}
-  <form method="POST" action="">
-    <a href="/auth/facebook">Facebook Signup </a> <br><br>
-    OR <br><br>
+    <a href="/auth/facebook">Signup with Facebook </a> <br><br>
+    <form method="POST" action="">
     Full Name: <input type="text" name="name"><br><br>
     Username: <input type="text" name="username"> <br><br>
     Password: <input type="password" name="password"> <br> <br>
@@ -11,11 +10,12 @@
   Already a user? <input type="submit" value="Sign In" name="userCheck">
   </form>
   {{else}}
-  <form method="POST" action="/login">
-    <input type="submit" value="Facebook Login" id="FBLogin"><br><br>
+
+  <a href="/auth/facebook">Login with Facebook </a> <br><br>
     OR <br><br>
+    <form method="POST" action="/login">
     Username: <input type="text" name="username"> <br><br>
     Password: <input type="password" name="password"> <br> <br>
-    <input type="submit" value="Login"><br> <br>
+    <input type="submit" value="Log In"><br> <br>
   </form>
 {{/if}}

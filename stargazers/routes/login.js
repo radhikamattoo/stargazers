@@ -6,29 +6,13 @@ var User = mongoose.model('User');
 var List = mongoose.model('List');
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
+LocalStrategy = require('passport-local').Strategy;
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   if(req.session.newUser === undefined){ req.session.newUser = true;}
   res.render('login', {title: "Stargazer's Collection", newUser : req.session.newUser});
 });
-
-//TODO: Insert Facebook Passport authentication middleware
-passport.use(new FacebookStrategy({
-    clientID: 1560296170929426,
-    clientSecret: '226542e3a1d276aab0759b3e23085a81',
-    callbackURL: "localhost:3000/facebook"
-  },
-  function(accessToken, refreshToken, profile, done) {
-    //do some req.session shit?
-    var name = profile.displayName;
-    console.log(name);
-    User.findOrCreate({name:name}, function(err, user, created){
-      console.log(user.name + " " + user.username);
-      console.log("Created? " + created);
-    });
-  }
-));
 
 /* Login/Signup redirect */
 router.post('/', function(req, res, next){
@@ -101,12 +85,11 @@ router.post('/', function(req, res, next){
 });
 
 /* Old user login submission */
-router.post('/login', function(req, res, next){
-  //TODO: USER AUTHENTICATION HERE - reject if username already taken, etc..
-  res.redirect('/' + req.body.username);
+router.post('/login', passport.authenticate('local'),
+    function(req, res) {
+          console.log("Authenticated!");
+          res.redirect('/' + req.user.username);
 });
-
-
 
 // Redirect the user to Facebook for authentication.  When complete,
 // Facebook will redirect the user back to the application at
@@ -118,7 +101,7 @@ router.get('/auth/facebook', passport.authenticate('facebook'));
 // access was granted, the user will be logged in.  Otherwise,
 // authentication has failed.
 router.get('/auth/facebook/callback',
-  passport.authenticate('facebook', { successRedirect: '/',
+  passport.authenticate('facebook', { successRedirect: '/NICE',
                                       failureRedirect: '/' }));
 
 /* Profile Page */
@@ -150,8 +133,5 @@ router.get('/:username', function(req, res, next){
   // });//user findOne
 });
 
-router.get('/facebook', function(req, res, next){
-
-});
 
 module.exports = router;
