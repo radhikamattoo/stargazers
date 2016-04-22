@@ -1,0 +1,74 @@
+<h1> {{name}} </h1>
+<div id="list">
+  <div id="form">
+    <p> Narrow your search by querying with a hostname, planet letter, or by temperature </p>
+    <form type="GET" method="">
+      Hostname: <input type="text" name="hostname"> <br>
+      Planet Letter: <input type="text" name="planetletter"> <br>
+      Temperature (K): <input type="number" name="temperature"><br>
+      <input type="submit" value="Search!">
+    </form>
+  </div>
+<table class="table">
+  <tr>
+    <th>Host Name </th>
+    <th>Planet Letter </th>
+    <th>Discovery </th>
+    <th>Planets in System</th>
+    <th>Orbital Period </th>
+    <th>Orbit (SemiMajor Axis) </th>
+    <th>Eccentricity </th>
+    <th>Inclination </th>
+    <th>Mass wrt Jupiter </th>
+    <th>Mass wrt Provenance </th>
+    <th>Radius wrt Jupiter </th>
+    <th>Density </th>
+    <th>TVV Flag </th>
+    <th>Kepler Field Flag </th>
+    <th>K2 Mission Flag </th>
+    <th>Num Notes </th>
+    <th>RA (Str) </th>
+    <th>RA </th>
+    <th>Dec (Str)</th>
+    <th>Dec </th>
+    <th>Distance </th>
+    <th>Optical Magnitude </th>
+    <th>Optical Magnitude Band </th>
+    <th>Temperature (K) </th>
+    <th>Stellar Mass </th>
+    <th>Stellar Radius </th>
+    <th>Updated </th>
+  </tr>
+  {{#each list}}
+    <tr>
+      <td>{{HostName}} </td>
+      <td>{{PlanetLetter}} </td>
+      <td>{{Discovery}} </td>
+      <td>{{NumPlanetsInSystem}} </td>
+      <td>{{OrbitalPeriod}} </td>
+      <td>{{OrbitSemiMajorAxis}} </td>
+      <td>{{Eccentricity}} </td>
+      <td>{{Inclination}} </td>
+      <td>{{MassWRTJupiter}} </td>
+      <td>{{MassWRTProvenance}} </td>
+      <td>{{RadiusWRTJupiter}} </td>
+      <td>{{Density}} </td>
+      <td>{{TVVFlag}} </td>
+      <td>{{KeplerFieldFlag}} </td>
+      <td>{{K2MissionFlag}} </td>
+      <td>{{NumberofNotes}} </td>
+      <td>{{RAStr}} </td>
+      <td>{{RA}} </td>
+      <td>{{DecStr}} </td>
+      <td>{{Dec}} </td>
+      <td>{{Distance}} </td>
+      <td>{{OpticalMagnitude}} </td>
+      <td>{{OpticalMagnitudeBand}} </td>
+      <td>{{TemperatureK}} </td>
+      <td>{{StellarMass}} </td>
+      <td>{{StellarRadius}} </td>
+      <td>{{Updated}} </td>
+    </tr>
+  {{/each}}
+</table>
+</div>

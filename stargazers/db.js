@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-
+var findOrCreate = require('mongoose-findorcreate');
 
 //define schemas
 var Exoplanet = new mongoose.Schema({
@@ -28,7 +28,8 @@ var Exoplanet = new mongoose.Schema({
   TemperatureK : {type:Number, required:true},
   StellarMass: {type:Number, required:true},
   StellarRadius: {type:Number, required:true},
-  LasUpdate: {type:Date}
+  LasUpdate: {type:Date},
+  NASA: false
 });
 
 var List = new mongoose.Schema({
@@ -44,6 +45,8 @@ var User = new mongoose.Schema({
   password: {type:String, required:true},
   lists: [{type: mongoose.Schema.Types.ObjectId, ref: 'List'}]
 });
+
+User.plugin(findOrCreate);
 
 //register schema as model
 mongoose.model("Exoplanet", Exoplanet);

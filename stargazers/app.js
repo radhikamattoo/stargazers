@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 
+
 //set up sessions
 var sessionOptions = {
 	secret: 'secret cookie thang',
@@ -14,7 +15,8 @@ var sessionOptions = {
 //print in database code
 require('./db.js');
 
-var routes = require('./routes/index');
+var login = require('./routes/login');
+var user = require('./routes/user');
 
 var app = express();
 
@@ -28,7 +30,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session(sessionOptions));
 
-app.use('/', routes);
+app.use('/', login);
+app.use('/', user);
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

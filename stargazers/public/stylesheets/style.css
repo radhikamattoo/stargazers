@@ -12,18 +12,33 @@ a:link {
     background-color: transparent;
     text-decoration: none;
 }
-a:visited {
-    color: blue;
-    background-color: transparent;
-    text-decoration: none;
-}
+
 a:hover {
-    color: red;
+    color: pink;
     background-color: transparent;
     text-decoration: underline;
 }
 a:active {
-    color: pink;
+    color: orange;
     background-color: transparent;
     text-decoration: underline;
+}
+#lists{
+  text-align: left;
+}
+table {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:11px;
+	text-shadow: 1px 1px 0px #fff;
+	background:#eaebec;
+	margin:20px;
+}
+table th {
+	padding:21px 25px 22px 25px;
+	border-top:1px solid #fafafa;
+	border-bottom:1px solid #e0e0e0;
+	background: #ededed;
+}
+table, th, td {
+   border: 1px solid black;
 }
