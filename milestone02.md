@@ -1,6 +1,6 @@
-## Instructions for Milestone 2
+# Instructions for Milestone 2
 
-# Add data & Research Topic  - localhost:3000
+## Add data & Research Topic  - localhost:3000
 
 Clone the directory and npm install inside the stargazers directory. Then nodemon bin/www
 and go to localhost:3000. This is the login/signup page for the project.
@@ -20,7 +20,7 @@ Login with:
 username: radhika
 password: helloWorld
 
-# Reading data - localhost:3000/radhika/nasa/archive
+## Reading data - localhost:3000/radhika/nasa/archive
 After signing up/in, you'll be directed to a workshopped profile page, with a link
 to the NASA Archive. Clicking this link will bring you to a page of the entire dataset,
 and will let you query it using a GET form. The code for this is in user.js
