@@ -13,9 +13,9 @@ is in login.js.
 To demonstrate implementation of Passport, one of my research topics, you can login to the existing account, which passport will verify and console.log("Authenticated!"). I'm still working on implementing Passport for Facebook. The configuration code for Passport is in
 app.js, the logic for implementing it is in login.js
 
-Go to localhost:3000
-Click the "Already a user? Sign In" button.
-Login with:
+Go to localhost:3000     
+Click the "Already a user? Sign In" button.     
+Login with:    
 
 username: radhika       
 password: helloWorld
