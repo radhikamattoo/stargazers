@@ -65,7 +65,7 @@ passport.use(new FacebookStrategy({
 		profileFields: ['id','emails', 'first_name', 'last_name', 'displayName']
   },
   function(accessToken, refreshToken, profile, done) {
-    //do some req.session shit?
+    //do some req.session stuff?
     var name = profile.displayName;
     User.findOrCreate({name:name}, function(err, user, created){
       console.log(user.name + " " + user.username);
