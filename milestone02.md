@@ -17,7 +17,7 @@ Go to localhost:3000
 Click the "Already a user? Sign In" button.
 Login with:
 
-username: radhika
+username: radhika       
 password: helloWorld
 
 ## Reading data - localhost:3000/radhika/nasa/archive
