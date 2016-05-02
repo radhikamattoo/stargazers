@@ -10,8 +10,12 @@ LocalStrategy = require('passport-local').Strategy;
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  if(req.session.newUser === undefined){ req.session.newUser = true;}
-  res.render('login', {title: "Stargazer's Collection", newUser : req.session.newUser});
+  if(req.session.invalidURL){ //user tried accessing page w/o logging in/signing up
+    req.session.invalidURL = false;
+    res.render('signUp', {error: "You haven't logged in or signed up!"});
+  }else{
+    res.render('signUp');
+  }
 });
 
 /* Login/Signup redirect */
@@ -27,7 +31,6 @@ router.post('/', function(req, res, next){
       username: username,
       password: password,
     });
-
     //save newly created user
     user.save(function(err, user, count){
       if(err){ res.render('error', {error: err});}
@@ -76,19 +79,38 @@ router.post('/', function(req, res, next){
       user.save(function(err, user, count){
         if(err){ res.render('error', {error: err});}
       });
+      req.session.username = username;
       res.redirect('/' + username);
     });
   }else{ //Old user that clicked 'Login' button; redirect to new form
-    req.session.newUser = false;
-    res.redirect('/');
+    res.redirect('/login');
   }
 });
 
-/* Old user login submission */
-router.post('/login', passport.authenticate('local'),
+/*Old user login*/
+router.get('/login', function(req, res, next){
+  //redirected back here if the login is incorrect
+  if(req.session.failure){
+    req.session.failure = false;
+    res.render('login', {title: "Stargazer's Collection", error:req.flash('error')});
+  }else{
+    res.render('login', {title: "Stargazer's Collection"});
+  }
+});
+
+
+/* Old user login submission, implement a local strategy from Passport since they don't want to sign in with Facebook */
+router.post('/login', passport.authenticate('local',{failureRedirect: '/failure',  failureFlash: true}),
     function(req, res) {
           console.log("Authenticated!");
+          req.session.username = req.user.username;
           res.redirect('/' + req.user.username);
+});
+
+/*Default failure redirect for both local and Facebook strategy. Sets the session variable to render the correct template on the homepage and let the user try to login again */
+router.get('/failure', function(req, res, next){
+  req.session.failure = true;
+  res.redirect('/login');
 });
 
 // Redirect the user to Facebook for authentication.  When complete,
@@ -101,37 +123,48 @@ router.get('/auth/facebook', passport.authenticate('facebook'));
 // access was granted, the user will be logged in.  Otherwise,
 // authentication has failed.
 router.get('/auth/facebook/callback',
-  passport.authenticate('facebook', { successRedirect: '/NICE',
-                                      failureRedirect: '/' }));
+  passport.authenticate('facebook', { successRedirect: '/facebookLogin' ,
+                                      failureRedirect: '/failure' }));
+
+/*Used to redirect to user's profile page after successful login/signup*/
+router.get('/facebookLogin', function(req, res, next){
+  //from passport.deserializeUser, we have the username stored in req.user
+  //so just redirect to their profile page, since now we have access to req obj
+  req.session.username = req.user;
+  res.redirect('/' + req.user);
+});
 
 /* Profile Page */
 router.get('/:username', function(req, res, next){
   //get user's full name and their Lists via mongoose
 
   var username = req.params.username;
-  res.render('profile', {username:username});
+  //they haven't signed in!! they can't do that!
+  if(req.session.username !== username || req.session.username === undefined){
+    req.session.invalidURL = true;
+    res.redirect('/');
+  }
+  User.findOne({username:username}, function(err, user){
+    if(err !== null || user === null){ res.send(err);}
+    var header = "Hello, " + user.name + "!";
+    var id = user._id;
 
-  //
-  // User.findOne({username:username}, function(err, user, count){
-  //   if(err === null || user === null){ res.send(err);}
-  //   var header = "Hello, " + user.name + "!";
-  //   var listIds = user.lists; //just object id's! remember to query for them
-  //   var lists = [{ planets: [],
-  //       __v: 0,
-  //       created: 'Sun Apr 10 2016 22:14:59 GMT-0400 (EDT)',
-  //       name: 'Nasa Observed',
-  //       user: '570b08a3ce918660354269bb',
-  //       _id: '570b08a3ce918660354269bc' },
-  //       { planets: [],
-  //       __v: 0,
-  //       created: 'Sun Apr 10 2016 22:14:59 GMT-0400 (EDT)',
-  //       name: 'User Observed',
-  //       user: '570b08a3ce918660354269bb',
-  //       _id: '570b08a3ce918660354269bd' }];
-  //   console.log(lists);
-  //   res.render('profile', {header:header, lists:lists, username:username});
-  // });//user findOne
-});
+    //find all lists associated with user id
+    List.find({user: id}, function(err, lists, count){
+      var listObject = {};
+
+      //parse lists to display names and links nicely in hbs
+      for(var i = 0; i < lists.length; i++){
+        listObject[i] = {
+          link: user.username + "/" + lists[i].name.replace(/ +/g, ""),
+          name: lists[i].name
+        };
+      }
+      res.render('profile', {header:header, lists:listObject, username:username});
+
+    });//List find
+  });//User findOne
+}); //router.get
 
 
 module.exports = router;

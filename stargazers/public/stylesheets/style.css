@@ -42,3 +42,8 @@ table th {
 table, th, td {
    border: 1px solid black;
 }
+
+.error{
+  text-color: red;
+  text-decoration: underline;
+}

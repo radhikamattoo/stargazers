@@ -1,0 +1,17 @@
+<h1>Stargazer's Collection</h1>
+<h4>Welcome!</h4>
+<div class = "container">
+
+{{#if error}}
+  <br><br> <p class="error"> {{error}} </p><br><br>
+{{/if}}
+
+<a href="/auth/facebook">Signup with Facebook </a> <br><br>
+<form method="POST" action="">
+Full Name: <input type="text" name="name"><br><br>
+Username: <input type="text" name="username"> <br><br>
+Password: <input type="password" name="password"> <br> <br>
+<input type="submit" value="Sign Up" name="userCheck"><br> <br>
+Already a user? <input type="submit" value="Sign In" name="userCheck">
+</form>
+</div>

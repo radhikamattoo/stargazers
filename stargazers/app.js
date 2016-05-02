@@ -3,6 +3,7 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var flash = require('connect-flash');
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 var LocalStrategy = require('passport-local').Strategy;
@@ -37,11 +38,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session(sessionOptions));
 
 //CONFIGURE PASSPORT FOR USER AUTHENTICATION
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
 
-//regular user-login
+//Set up strategies for user authentication:
+
+//regular username-password login
 passport.use(new LocalStrategy(
   function(username, password, done) {
     User.findOne({ username: username }, function(err, user) {
@@ -68,7 +72,7 @@ passport.use(new FacebookStrategy({
     //do some req.session stuff?
     var name = profile.displayName;
     User.findOrCreate({name:name}, function(err, user, created){
-      console.log(user.name + " " + user.username);
+      return done(null, user);
     });
   }
 ));
@@ -78,7 +82,7 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(user, done) {
-  done(null, user);
+  done(null, user.username);
 });
 
 app.use('/', login);

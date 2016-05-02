@@ -1,20 +1,16 @@
 <h1> {{header}} </h1>
-<h1> Welcome back to Stargazer's, {{username}}!</h1>
+<h1> Welcome back to Stargazer's!</h1>
 
-<h4> As our site is currently under construction, only the default NASA Archive is available </h4>
 <p><a href="{{username}}/nasa/archive"> NASA Archive </a></p>
 
-
-
-
-{{!-- div id="lists">
+<div id="lists">
   <h3> Your Exoplanet Lists </h3>
   <p> Click on a list to see/edit its contents </p>
 <ul>
   {{#each lists}}
-  <li> <a href= "{{name}}"> {{name}} </a> </li>
+  <li> <a href= "{{link}}"> {{name}} </a> </li>
   {{/each}}
 </ul>
 <h4> Click <a href="{{username}}/newList"> here </a> to create a new list </h4>
 
-</div> --}}
+</div>
