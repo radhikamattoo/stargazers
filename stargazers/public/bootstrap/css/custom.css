@@ -13,8 +13,16 @@ table th {
 	padding:21px 25px 22px 25px;
 	border-top:1px solid #fafafa;
 	border-bottom:1px solid #e0e0e0;
-	background: #ededed;
+	background: #black;
 }
 table, th, td {
    border: 1px solid black;
+}
+
+body{
+  background-color: #f1e8dc;
+}
+
+.btn btn-primary-outline{
+
 }

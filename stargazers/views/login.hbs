@@ -4,12 +4,11 @@
 {{#if error}}
   <p class="error"> {{error}} Please try again. </p>
 {{/if}}
-
-<a href="/auth/facebook">Login with Facebook </a> <br><br>
+<a class="btn btn-primary-outline" href="/auth/facebook" role="button">Login with Facebook</a><br> <br>
   OR <br><br>
   <form method="POST" action="">
   Username: <input type="text" name="username"> <br><br>
   Password: <input type="password" name="password"> <br> <br>
-  <input type="submit" value="Log In"><br> <br>
+  <button class="btn btn-primary" type="submit" value="Log In">Log In</button<br> <br>
 </form>
 </div>

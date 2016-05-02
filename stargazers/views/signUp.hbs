@@ -6,12 +6,13 @@
   <br><br> <p class="error"> {{error}} </p><br><br>
 {{/if}}
 
-<a href="/auth/facebook">Signup with Facebook </a> <br><br>
+<a class="btn btn-primary-outline" href="/auth/facebook" role="button">Login with Facebook</a> <br> <br>
+
 <form method="POST" action="">
 Full Name: <input type="text" name="name"><br><br>
 Username: <input type="text" name="username"> <br><br>
 Password: <input type="password" name="password"> <br> <br>
-<input type="submit" value="Sign Up" name="userCheck"><br> <br>
-Already a user? <input type="submit" value="Sign In" name="userCheck">
+<button class="btn btn-primary" type="submit" value="Sign Up" name="userCheck">Sign Up </button><br><br>
+<button class="btn btn-secondary" type="submit" value="Sign In" name="userCheck"> Already a user? </button
 </form>
 </div>
