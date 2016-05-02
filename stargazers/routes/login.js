@@ -13,6 +13,8 @@ router.get('/', function(req, res, next) {
   if(req.session.invalidURL){ //user tried accessing page w/o logging in/signing up
     req.session.invalidURL = false;
     res.render('signUp', {error: "You haven't logged in or signed up!"});
+  }else if(req.session.username){ //already logged in, redirect straight to profile page
+    res.redirect('/' + req.session.username);
   }else{
     res.render('signUp');
   }
@@ -146,7 +148,7 @@ router.get('/:username', function(req, res, next){
   }
   User.findOne({username:username}, function(err, user){
     if(err !== null || user === null){ res.send(err);}
-    var header = "Hello, " + user.name + "!";
+    var header = "Hello, " + user.name + ".";
     var id = user._id;
 
     //find all lists associated with user id

@@ -1,16 +1,16 @@
 <h1> {{header}} </h1>
-<h1> Welcome back to Stargazer's!</h1>
+<h1> Welcome back to Stargazer's!</h1> 
 
-<p><a href="{{username}}/nasa/archive"> NASA Archive </a></p>
+<p><a href="{{username}}/nasa/archive" class="btn btn-primary" role="button"> NASA Archive </a></p>
 
 <div id="lists">
   <h3> Your Exoplanet Lists </h3>
   <p> Click on a list to see/edit its contents </p>
-<ul>
+<ul class="list-group">
   {{#each lists}}
-  <li> <a href= "{{link}}"> {{name}} </a> </li>
+  <li> <a href= "{{link}}" class="btn" role="button"> {{name}} </a> </li><br>
   {{/each}}
 </ul>
-<h4> Click <a href="{{username}}/newList"> here </a> to create a new list </h4>
+<h4> Click <a href="{{username}}/newList" > here </a> to create a new list </h4>
 
 </div>
