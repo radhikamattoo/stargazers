@@ -2,18 +2,27 @@
   <p><a href="/stargazers/{{username}}/logout" class="btn btn-primary pull-left" role="button" id="logout"> Logout </a></p><br>
 </div><br>
 <h1> {{header}} </h1>
-<h1> Welcome back to Stargazer's!</h1>
-
-<p><a href="/stargazers/{{username}}/nasa/archive" class="btn btn-primary" role="button"> NASA Archive </a></p>
+<h3> Welcome back to Stargazer's!</h3>
 
 <div id="lists">
   <h3> Your Exoplanet Lists </h3>
   <p> Click on a list to see/edit its contents </p>
-<ul class="list-group">
+<ul class="list-group container">
   {{#each lists}}
-  <li> <a href= "{{link}}" class="btn" role="button"> {{name}} </a> </li><br>
+  <div>
+  <li class="col-md-2 col-md-offset-5"> <a class="list-group-item" href= "{{link}}" role="button"> {{name}} </a></li><br><br><br>
+  </div>
   {{/each}}
 </ul>
 <h4> Click <a href="/stargazers/{{username}}/newList" > here </a> to create a new list </h4>
 
 </div>
+
+<hr>
+<div>
+  <p> For Milestone 3, to show that the form just submitted actually does something,  here is the MongoDB Document created/retrieved for this user: </p>
+  <p> {{userObject}} </p>
+</div>
+<hr>
+
+<p><a href="/stargazers/{{username}}/nasa/archive" class="btn btn-primary" role="button"> NASA Archive </a></p>

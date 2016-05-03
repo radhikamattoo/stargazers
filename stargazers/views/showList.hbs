@@ -1,49 +1,54 @@
 <h1> {{name}} </h1>
 {{#if list}}
-  <div id="form">
     <p> Narrow your search by querying with a hostname, planet letter, or by temperature </p>
+    <div class="form-group">
     <form type="GET" method="">
-      Hostname: <input type="text" name="hostname" placeholder="11 Com"> <br><br>
-      Planet Letter: <input type="text" name="planetletter" placeholder="B"> <br><br>
-      Temperature (K): <input type="number" name="temperature" placeholder="4742"><br><br>
+       <div class="form-group col-xs-4 col-md-offset-4">
+         Hostname: <input  class="form-control" type="text" name="hostname" placeholder="11 Com">
+       </div>
+       <div class="form-group col-xs-4 col-md-offset-4">
+      Planet Letter: <input class="form-control" type="text" name="planetletter" placeholder="B">
+    </div>
+    <div class="form-group col-xs-4 col-md-offset-4">
+      Temperature (K): <input  class="form-control" type="number" name="temperature" placeholder="4742">
+    </div>
+    <div class="form-group col-xs-4 col-md-offset-4">
       <button class="btn btn-primary" type="submit" value="Search">Search!</button> <br>
+    </div>
     </form><br>
   </div>
-  <p><a href="/stargazers/{{username}}" class="btn btn-secondary" role="button"> Back to Profile </a></p>
+  <div class="form-group col-xs-4 col-md-offset-4">
+    <p><a href="/stargazers/{{username}}" class="btn btn-secondary" role="button"> Back to Profile </a></p>
+  </div> <br><br><br>
 
-  <div class="container">
-  <div class="panel-body">
-  <div class="table-responsive">
   <table class="table table-bordered table-hover table-striped">
     <thead class="thead-inverse">
     <tr>
-      <th class="col-md-1">Host Name </th>
-      <th class="col-md-1">Planet Letter </th>
-      <th class="col-md-1">Discovery </th>
-      <th class="col-md-1">Planets in System</th>
-      <th class="col-md-1">Orbital Period </th>
-      <th class="col-md-1">Orbit (SemiMajor Axis) </th>
-      <th class="col-md-1">Eccentricity </th>
-      <th class="col-md-1">Inclination </th>
-      <th class="col-md-1">Mass wrt Jupiter </th>
-      <th class="col-md-1">Mass wrt Provenance </th>
-      <th class="col-md-1">Radius wrt Jupiter </th>
-      <th class="col-md-1">Density </th>
-      <th class="col-md-1">TVV Flag </th>
-      <th class="col-md-1">Kepler Field Flag </th>
-      <th class="col-md-1">K2 Mission Flag </th>
-      <th class="col-md-1">Num Notes </th>
-      <th class="col-md-1">RA (Str) </th>
-      <th class="col-md-1">RA </th>
-      <th class="col-md-1">Dec (Str)</th>
-      <th class="col-md-1">Dec </th>
-      <th class="col-md-1">Distance </th>
-      <th class="col-md-1">Optical Magnitude </th>
-      <th class="col-md-1">Optical Magnitude Band </th>
-      <th class="col-md-1">Temperature (K) </th>
-      <th class="col-md-1">Stellar Mass </th>
-      <th class="col-md-1">Stellar Radius </th>
-      <th class="col-md-1">Updated </th>
+      <th >Host Name </th>
+      <th >Planet Letter </th>
+      <th>Discovery </th>
+      <th >Planets in System</th>
+      <th >Orbital Period </th>
+      <th >Orbit (SemiMajor Axis) </th>
+      <th>Eccentricity </th>
+      <th>Inclination </th>
+      <th>Mass wrt Jupiter </th>
+      <th >Density </th>
+      <th>TVV Flag </th>
+      <th >Kepler Field Flag </th>
+      <th>K2 Mission Flag </th>
+      <th>Num Notes </th>
+      <th >RA (Str) </th>
+      <th >RA </th>
+      <th >Dec (Str)</th>
+      <th >Dec </th>
+      <th>Distance </th>
+      <th >Optical Magnitude </th>
+      <th>Optical Magnitude Band </th>
+      <th>Temperature (K) </th>
+      <th >Stellar Mass </th>
+      <th >Stellar Radius </th>
+      <th>Updated </th>
     </tr>
   </thead>
     {{#each list}}
@@ -57,8 +62,6 @@
         <td>{{Eccentricity}} </td>
         <td>{{Inclination}} </td>
         <td>{{MassWRTJupiter}} </td>
-        <td>{{MassWRTProvenance}} </td>
-        <td>{{RadiusWRTJupiter}} </td>
         <td>{{Density}} </td>
         <td>{{TVVFlag}} </td>
         <td>{{KeplerFieldFlag}} </td>
@@ -78,15 +81,17 @@
       </tr>
     {{/each}}
   </table>
-  </div>
-  </div>
-  </div>
 {{else}}
   <br> <h4> You haven't added any exoplanets yet! </h4> <br>
 {{/if}}
 {{#if ownList}}
-  <p><a class="btn btn-primary" href=""> Edit your List </a></p>
+  <p><a class="btn btn-primary" href="/stargazers/{{username}}/{{linkName}}/add"> Add Exoplanet(s) </a></p>
+  {{#if list}}
+  <p><a class="btn btn-primary" href="/stargazers/{{username}}/{{linkName}}/selectExoplanets"> Delete/Edit Exoplanet(s) </a></p>
+  {{/if}}
   {{#unless list}}
-  <p><a href="/stargazers/{{username}}" class="btn btn-secondary" role="button"> Back to Profile </a></p>
+  <div class="form-group col-xs-4 col-md-offset-4">
+    <p><a href="/stargazers/{{username}}" class="btn btn-secondary" role="button"> Back to Profile </a></p>
+  </div>
   {{/unless}}
 {{/if}}

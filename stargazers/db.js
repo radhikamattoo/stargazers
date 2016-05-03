@@ -10,7 +10,6 @@ var Exoplanet = new mongoose.Schema({
   Eccentricity: {type:Number},
   Inclination: {type:Number},
   MassWRTJupiter: {type:Number},
-  MassWRTProvenance: {type:Number},
   Density: {type:Number},
   TVVFlag: {type:Number},
   KeplerFieldFlag : {type:Number},
@@ -26,7 +25,7 @@ var Exoplanet = new mongoose.Schema({
   TemperatureK : {type:Number, required:true},
   StellarMass: {type:Number, required:true},
   StellarRadius: {type:Number, required:true},
-  LasUpdate: {type:Date},
+  Updated: {type:Date},
   NASA: false
 });
 

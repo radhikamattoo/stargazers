@@ -16,7 +16,7 @@ router.get('/', function(req, res, next) {
   }else if(req.session.username){ //already logged in, redirect straight to profile page
     res.redirect('/stargazers/' + req.session.username);
   }else if(req.session.loggedOut){
-    req.session.loggedOut = false; 
+    req.session.loggedOut = false;
     res.render('signUp', {error: "You have been logged out."});
   }else{
     res.render('signUp');
@@ -173,7 +173,7 @@ router.get('/stargazers/:username', function(req, res, next){
           name: lists[i].name
         };
       }
-      res.render('profile', {header:header, lists:listObject, username:username});
+      res.render('profile', {header:header, lists:listObject, username:username, userObject: user});
 
     });//List find
   });//User findOne
