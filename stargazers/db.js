@@ -1,6 +1,4 @@
 var mongoose = require('mongoose');
-var findOrCreate = require('mongoose-findorcreate');
-
 //define schemas
 var Exoplanet = new mongoose.Schema({
   HostName: {type:String},
@@ -41,12 +39,12 @@ var List = new mongoose.Schema({
 
 var User = new mongoose.Schema({
   name: {type:String, required:true},
+  fb: {type: Boolean, required: true}, //if the user signs in with facebook
   username: {type:String, required:true},
   password: {type:String, required:true},
   lists: [{type: mongoose.Schema.Types.ObjectId, ref: 'List'}]
 });
 
-User.plugin(findOrCreate);
 
 //register schema as model
 mongoose.model("Exoplanet", Exoplanet);

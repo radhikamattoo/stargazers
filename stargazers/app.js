@@ -20,6 +20,7 @@ require('./db.js');
 //get User for passport authentication
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
+var List = mongoose.model('List');
 
 
 var login = require('./routes/login');
@@ -42,6 +43,10 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
+// app.use(function(req, res, next) {
+//   console.log('handling request for: ' + req.url + "\n\n");
+//   next();
+// });
 
 //Set up strategies for user authentication:
 
@@ -66,23 +71,94 @@ passport.use(new FacebookStrategy({
     clientID: 1560296170929426,
     clientSecret: '226542e3a1d276aab0759b3e23085a81',
     callbackURL: "http://localhost:3000/auth/facebook/callback",
-		profileFields: ['id','emails', 'first_name', 'last_name', 'displayName']
+		profileFields: ['id', 'name']
   },
   function(accessToken, refreshToken, profile, done) {
-    //do some req.session stuff?
-    var name = profile.displayName;
-    User.findOrCreate({name:name}, function(err, user, created){
-      return done(null, user);
+		var password = profile.id;
+		var firstName = profile.name.givenName;
+		var lastName = profile.name.familyName;
+
+    User.findOne({fb:true, password: password}, function(err, user, created){
+				if(!user){ //create user!
+					var username = profile.username;
+					if(username === undefined){
+						username = firstName + "-" + lastName;
+					}
+					var newUser = new User({
+			      name: firstName + " " + lastName,
+						fb: true,
+			      username: username,
+			      password: password,
+			    });
+					newUser.save(function(err){
+						if (err) console.log(err);
+						//create the 2 default lists for each user
+			      var d = new Date();
+			      d = d.toString();
+			      var nasaList = new List({
+			        user: newUser._id,
+			        name: "Nasa Observed",
+			        created: d.toString()
+			      });
+			      var userList = new List({
+			        user: newUser._id,
+			        name: "User Observed",
+			        created: d
+			      });
+
+			      //save to lists collection
+			      nasaList.save(function(err, list, count){
+			        if(err){ res.render('error', {error: err});}
+			        console.log("NASA list saved");
+			      });
+			      userList.save(function(err, list, count){
+			        if(err){ res.render('error', {error: err});}
+			        console.log("User list saved");
+			      });
+			      //save list id's for findOne
+			      var nasaID = nasaList._id;
+			      var userID = userList._id;
+
+			      //populate list objects (i.e. populate user reference with new user)
+			      List.findOne({_id : nasaID}).populate('user').exec(function(err, list){
+			        if(err){ res.render('error', {error: err});}
+			        console.log("User for NASA list populated");
+			      });
+			      List.findOne({_id : userID}).populate('user').exec(function(err, list){
+			        if(err){ res.render('error', {error: err});}
+			        console.log("User for User list populated");
+			      });
+
+
+			      //now reverse - save the 2 lists in the array of lists in the user schema
+			      newUser.lists.push(nasaList);
+			      newUser.lists.push(userList);
+
+            return done(null, newUser);
+					});
+				}else if(user.username.indexOf('undefined') !== -1){
+					user.username = firstName + "-" + lastName;
+					user.save(function(err){
+						if (err) console.log(err);
+						return done(null, user);
+					});
+				}else{
+					console.log("user is now: " + user);
+      		return done(null, user);
+				}
     });
   }
 ));
 
 passport.serializeUser(function(user, done) {
-  done(null, user);
+  done(null, user.id);
 });
 
-passport.deserializeUser(function(user, done) {
-  done(null, user.username);
+passport.deserializeUser(function(id, done) {
+	User.findOne({_id:id}, function(err, user){
+		// console.log("User found from deserializer: " + user);
+		done(err, user);
+	});
 });
 
 app.use('/', login);

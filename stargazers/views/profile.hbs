@@ -1,7 +1,10 @@
+<div>
+  <p><a href="/stargazers/{{username}}/logout" class="btn btn-primary pull-left" role="button" id="logout"> Logout </a></p><br>
+</div><br>
 <h1> {{header}} </h1>
-<h1> Welcome back to Stargazer's!</h1> 
+<h1> Welcome back to Stargazer's!</h1>
 
-<p><a href="{{username}}/nasa/archive" class="btn btn-primary" role="button"> NASA Archive </a></p>
+<p><a href="/stargazers/{{username}}/nasa/archive" class="btn btn-primary" role="button"> NASA Archive </a></p>
 
 <div id="lists">
   <h3> Your Exoplanet Lists </h3>
@@ -11,6 +14,6 @@
   <li> <a href= "{{link}}" class="btn" role="button"> {{name}} </a> </li><br>
   {{/each}}
 </ul>
-<h4> Click <a href="{{username}}/newList" > here </a> to create a new list </h4>
+<h4> Click <a href="/stargazers/{{username}}/newList" > here </a> to create a new list </h4>
 
 </div>

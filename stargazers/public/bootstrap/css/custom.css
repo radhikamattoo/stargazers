@@ -37,8 +37,9 @@ body{
 }
 
 .btn.btn-primary-outline:hover{
-    background: #33a6cc;
+    background: #0099cc;
     color: white;
+    border-color: #0099cc;
 }
 
 .btn:focus, .btn:active:focus, .btn.active:focus {
@@ -50,9 +51,32 @@ body{
     color: #ffffff;
 }
 
-.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active {
+.btn-primary:hover {
     background-color: transparent;
     color: #0099cc;
     border: 2px solid #0099cc;
     padding: 12px 22px;
+}
+.btn.btn-secondary{
+  color:white;
+}
+.btn.btn-secondary{
+  border: 2px solid #999999;
+  background: #999999;
+  color: white
+}
+.btn.btn-secondary:hover{
+  background-color: transparent;
+  color: #999999;
+  padding: 14px 24px;
+}
+#logout{
+  padding: 4px 8px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 8px;
+}
+#logout:hover{
+  padding: 2px 6px;
 }

@@ -14,7 +14,10 @@ router.get('/', function(req, res, next) {
     req.session.invalidURL = false;
     res.render('signUp', {error: "You haven't logged in or signed up!"});
   }else if(req.session.username){ //already logged in, redirect straight to profile page
-    res.redirect('/' + req.session.username);
+    res.redirect('/stargazers/' + req.session.username);
+  }else if(req.session.loggedOut){
+    req.session.loggedOut = false; 
+    res.render('signUp', {error: "You have been logged out."});
   }else{
     res.render('signUp');
   }
@@ -22,6 +25,7 @@ router.get('/', function(req, res, next) {
 
 /* Login/Signup redirect */
 router.post('/', function(req, res, next){
+  console.log("REQ.USER: ", req.user);
   var username = req.body.username;
   var password = req.body.password;
   var userCheck = req.body.userCheck;
@@ -30,13 +34,14 @@ router.post('/', function(req, res, next){
     var name = req.body.name;
     var user = new User({
       name: name,
+      fb: false,
       username: username,
       password: password,
     });
     //save newly created user
     user.save(function(err, user, count){
       if(err){ res.render('error', {error: err});}
-
+      else if(user === null){res.send("USER IS NULL."); return;}
       //create the 2 default lists for each user
       var d = new Date();
       d = d.toString();
@@ -82,7 +87,7 @@ router.post('/', function(req, res, next){
         if(err){ res.render('error', {error: err});}
       });
       req.session.username = username;
-      res.redirect('/' + username);
+      res.redirect('/stargazers/' + username);
     });
   }else{ //Old user that clicked 'Login' button; redirect to new form
     res.redirect('/login');
@@ -102,18 +107,9 @@ router.get('/login', function(req, res, next){
 
 
 /* Old user login submission, implement a local strategy from Passport since they don't want to sign in with Facebook */
-router.post('/login', passport.authenticate('local',{failureRedirect: '/failure',  failureFlash: true}),
-    function(req, res) {
-          console.log("Authenticated!");
-          req.session.username = req.user.username;
-          res.redirect('/' + req.user.username);
-});
+router.post('/login', passport.authenticate('local',{ successRedirect: '/success', failureRedirect: '/failure',  failureFlash: true}));
 
-/*Default failure redirect for both local and Facebook strategy. Sets the session variable to render the correct template on the homepage and let the user try to login again */
-router.get('/failure', function(req, res, next){
-  req.session.failure = true;
-  res.redirect('/login');
-});
+
 
 // Redirect the user to Facebook for authentication.  When complete,
 // Facebook will redirect the user back to the application at
@@ -132,12 +128,27 @@ router.get('/auth/facebook/callback',
 router.get('/facebookLogin', function(req, res, next){
   //from passport.deserializeUser, we have the username stored in req.user
   //so just redirect to their profile page, since now we have access to req obj
-  req.session.username = req.user;
-  res.redirect('/' + req.user);
+  req.session.username = req.user.username;
+  console.log("Session username: " + req.user.username);
+  res.redirect('/stargazers/' + req.user.username);
 });
 
+
+/*Default failure redirect for both local and Facebook strategy. Sets the session variable to render the correct template on the homepage and let the user try to login again */
+router.get('/failure', function(req, res, next){
+  req.session.failure = true;
+  res.redirect('/login');
+});
+
+router.get('/success', function(req, res, next){
+  console.log("Authenticated!");
+  req.session.username = req.user.username;
+  res.redirect('/stargazers/' + req.user.username);
+});
+
+
 /* Profile Page */
-router.get('/:username', function(req, res, next){
+router.get('/stargazers/:username', function(req, res, next){
   //get user's full name and their Lists via mongoose
 
   var username = req.params.username;

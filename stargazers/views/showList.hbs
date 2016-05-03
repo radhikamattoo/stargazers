@@ -1,5 +1,5 @@
 <h1> {{name}} </h1>
-<div id="list">
+{{#if list}}
   <div id="form">
     <p> Narrow your search by querying with a hostname, planet letter, or by temperature </p>
     <form type="GET" method="">
@@ -9,78 +9,84 @@
       <button class="btn btn-primary" type="submit" value="Search">Search!</button> <br>
     </form><br>
   </div>
-<div class="container">
-<div class="panel-body">
-<div class="table-responsive">
-<table class="table table-bordered table-hover table-striped">
-  <thead class="thead-inverse">
-  <tr>
-    <th class="col-md-1">Host Name </th>
-    <th class="col-md-1">Planet Letter </th>
-    <th class="col-md-1">Discovery </th>
-    <th class="col-md-1">Planets in System</th>
-    <th class="col-md-1">Orbital Period </th>
-    <th class="col-md-1">Orbit (SemiMajor Axis) </th>
-    <th class="col-md-1">Eccentricity </th>
-    <th class="col-md-1">Inclination </th>
-    <th class="col-md-1">Mass wrt Jupiter </th>
-    <th class="col-md-1">Mass wrt Provenance </th>
-    <th class="col-md-1">Radius wrt Jupiter </th>
-    <th class="col-md-1">Density </th>
-    <th class="col-md-1">TVV Flag </th>
-    <th class="col-md-1">Kepler Field Flag </th>
-    <th class="col-md-1">K2 Mission Flag </th>
-    <th class="col-md-1">Num Notes </th>
-    <th class="col-md-1">RA (Str) </th>
-    <th class="col-md-1">RA </th>
-    <th class="col-md-1">Dec (Str)</th>
-    <th class="col-md-1">Dec </th>
-    <th class="col-md-1">Distance </th>
-    <th class="col-md-1">Optical Magnitude </th>
-    <th class="col-md-1">Optical Magnitude Band </th>
-    <th class="col-md-1">Temperature (K) </th>
-    <th class="col-md-1">Stellar Mass </th>
-    <th class="col-md-1">Stellar Radius </th>
-    <th class="col-md-1">Updated </th>
-  </tr>
-</thead>
-  {{#each list}}
-    <tr>
-      <td>{{HostName}} </td>
-      <td>{{PlanetLetter}} </td>
-      <td>{{Discovery}} </td>
-      <td>{{NumPlanetsInSystem}} </td>
-      <td>{{OrbitalPeriod}} </td>
-      <td>{{OrbitSemiMajorAxis}} </td>
-      <td>{{Eccentricity}} </td>
-      <td>{{Inclination}} </td>
-      <td>{{MassWRTJupiter}} </td>
-      <td>{{MassWRTProvenance}} </td>
-      <td>{{RadiusWRTJupiter}} </td>
-      <td>{{Density}} </td>
-      <td>{{TVVFlag}} </td>
-      <td>{{KeplerFieldFlag}} </td>
-      <td>{{K2MissionFlag}} </td>
-      <td>{{NumberofNotes}} </td>
-      <td>{{RAStr}} </td>
-      <td>{{RA}} </td>
-      <td>{{DecStr}} </td>
-      <td>{{Dec}} </td>
-      <td>{{Distance}} </td>
-      <td>{{OpticalMagnitude}} </td>
-      <td>{{OpticalMagnitudeBand}} </td>
-      <td>{{TemperatureK}} </td>
-      <td>{{StellarMass}} </td>
-      <td>{{StellarRadius}} </td>
-      <td>{{Updated}} </td>
-    </tr>
-  {{/each}}
-</table>
-</div>
-</div>
-</div>
+  <p><a href="/stargazers/{{username}}" class="btn btn-secondary" role="button"> Back to Profile </a></p>
 
-{{#if ownList}}
-  <a> Edit your List </a>
+  <div class="container">
+  <div class="panel-body">
+  <div class="table-responsive">
+  <table class="table table-bordered table-hover table-striped">
+    <thead class="thead-inverse">
+    <tr>
+      <th class="col-md-1">Host Name </th>
+      <th class="col-md-1">Planet Letter </th>
+      <th class="col-md-1">Discovery </th>
+      <th class="col-md-1">Planets in System</th>
+      <th class="col-md-1">Orbital Period </th>
+      <th class="col-md-1">Orbit (SemiMajor Axis) </th>
+      <th class="col-md-1">Eccentricity </th>
+      <th class="col-md-1">Inclination </th>
+      <th class="col-md-1">Mass wrt Jupiter </th>
+      <th class="col-md-1">Mass wrt Provenance </th>
+      <th class="col-md-1">Radius wrt Jupiter </th>
+      <th class="col-md-1">Density </th>
+      <th class="col-md-1">TVV Flag </th>
+      <th class="col-md-1">Kepler Field Flag </th>
+      <th class="col-md-1">K2 Mission Flag </th>
+      <th class="col-md-1">Num Notes </th>
+      <th class="col-md-1">RA (Str) </th>
+      <th class="col-md-1">RA </th>
+      <th class="col-md-1">Dec (Str)</th>
+      <th class="col-md-1">Dec </th>
+      <th class="col-md-1">Distance </th>
+      <th class="col-md-1">Optical Magnitude </th>
+      <th class="col-md-1">Optical Magnitude Band </th>
+      <th class="col-md-1">Temperature (K) </th>
+      <th class="col-md-1">Stellar Mass </th>
+      <th class="col-md-1">Stellar Radius </th>
+      <th class="col-md-1">Updated </th>
+    </tr>
+  </thead>
+    {{#each list}}
+      <tr>
+        <td>{{HostName}} </td>
+        <td>{{PlanetLetter}} </td>
+        <td>{{Discovery}} </td>
+        <td>{{NumPlanetsInSystem}} </td>
+        <td>{{OrbitalPeriod}} </td>
+        <td>{{OrbitSemiMajorAxis}} </td>
+        <td>{{Eccentricity}} </td>
+        <td>{{Inclination}} </td>
+        <td>{{MassWRTJupiter}} </td>
+        <td>{{MassWRTProvenance}} </td>
+        <td>{{RadiusWRTJupiter}} </td>
+        <td>{{Density}} </td>
+        <td>{{TVVFlag}} </td>
+        <td>{{KeplerFieldFlag}} </td>
+        <td>{{K2MissionFlag}} </td>
+        <td>{{NumberofNotes}} </td>
+        <td>{{RAStr}} </td>
+        <td>{{RA}} </td>
+        <td>{{DecStr}} </td>
+        <td>{{Dec}} </td>
+        <td>{{Distance}} </td>
+        <td>{{OpticalMagnitude}} </td>
+        <td>{{OpticalMagnitudeBand}} </td>
+        <td>{{TemperatureK}} </td>
+        <td>{{StellarMass}} </td>
+        <td>{{StellarRadius}} </td>
+        <td>{{Updated}} </td>
+      </tr>
+    {{/each}}
+  </table>
+  </div>
+  </div>
+  </div>
+{{else}}
+  <br> <h4> You haven't added any exoplanets yet! </h4> <br>
 {{/if}}
-</div>
+{{#if ownList}}
+  <p><a class="btn btn-primary" href=""> Edit your List </a></p>
+  {{#unless list}}
+  <p><a href="/stargazers/{{username}}" class="btn btn-secondary" role="button"> Back to Profile </a></p>
+  {{/unless}}
+{{/if}}
