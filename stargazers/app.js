@@ -122,17 +122,17 @@ passport.use(new FacebookStrategy({
 			      //populate list objects (i.e. populate user reference with new user)
 			      List.findOne({_id : nasaID}).populate('user').exec(function(err, list){
 			        if(err){ res.render('error', {error: err});}
-			        console.log("User for NASA list populated");
+			        console.log("User for NASA list populated with id: " + list.user);
 			      });
 			      List.findOne({_id : userID}).populate('user').exec(function(err, list){
 			        if(err){ res.render('error', {error: err});}
-			        console.log("User for User list populated");
+			        console.log("User for User list populated with id: " + list.user);
 			      });
 
 
 			      //now reverse - save the 2 lists in the array of lists in the user schema
 			      newUser.lists.push(nasaList);
-			      newUser.lists.push(userList);
+			      newUser.lists.push(userList); //FIXME?
 
             return done(null, newUser);
 					});

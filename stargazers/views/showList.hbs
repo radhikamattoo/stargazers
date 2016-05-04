@@ -1,4 +1,7 @@
 <h1> {{name}} </h1>
+{{#if newPlanet}}
+  <h4> Your exoplanet has been added! Congratulations! </h4>
+{{/if}}
 {{#if list}}
     <p> Narrow your search by querying with a hostname, planet letter, or by temperature </p>
     <div class="form-group">

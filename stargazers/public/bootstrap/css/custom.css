@@ -1,6 +1,3 @@
-.error{
-  color: red;
-}
 h1, h2{
   color: #0099cc;
 }
@@ -21,6 +18,11 @@ table th {
 
 body{
   background-color: #f1e8dc;
+}
+
+li{
+  list-style: none;
+  text-align: center;
 }
 
 .btn {
@@ -70,6 +72,16 @@ body{
   color: #999999;
   padding: 14px 24px;
 }
+
+.form-group.required .control-label:before {
+  content:"*";
+  color:red;
+}
+
+.error{
+  color: red;
+}
+
 #logout{
   padding: 4px 8px;
   font-weight: 700;
@@ -80,17 +92,6 @@ body{
 #logout:hover{
   padding: 2px 6px;
 }
-
-
-li{
-  list-style: none;
-  text-align: center;
-}
 ::-webkit-input-placeholder {
   text-align: center;
-}
-
-.form-group.required .control-label:before {
-  content:"*";
-  color:red;
 }

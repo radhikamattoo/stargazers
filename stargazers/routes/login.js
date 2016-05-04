@@ -59,11 +59,11 @@ router.post('/', function(req, res, next){
       //save to lists collection
       nasaList.save(function(err, list, count){
         if(err){ res.render('error', {error: err});}
-        console.log("NASA list saved");
+        console.log("User for NASA list populated with id: " + list.user);
       });
       userList.save(function(err, list, count){
         if(err){ res.render('error', {error: err});}
-        console.log("User list saved");
+        console.log("User for NASA list populated with id: " + list.user);
       });
       //save list id's for findOne
       var nasaID = nasaList._id;
@@ -130,6 +130,10 @@ router.get('/facebookLogin', function(req, res, next){
   //so just redirect to their profile page, since now we have access to req obj
   req.session.username = req.user.username;
   console.log("Session username: " + req.user.username);
+  //are they already a user? set up otherwise
+
+
+
   res.redirect('/stargazers/' + req.user.username);
 });
 
