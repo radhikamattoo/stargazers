@@ -1,3 +1,14 @@
+/* Radhika Mattoo
+   Applied Internet Tech Spring 2016
+   Final Project: Stargazers
+   This file is for traversing a user's profile, like:
+   Getting to the user's profile
+   Looking at/Querying the NASA database
+   Looking at a list
+   Querying a list
+   Adding a new list
+   Selecting exoplanets to edit
+*/
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
@@ -16,7 +27,7 @@ router.get("/stargazers/:username/logout", function(req, res, next){
   res.redirect('/');
 });
 
-//------------------------------- NASA Archive List----------------------------//
+//----------------------------(GET) NASA Archive List----------------------------//
 //TODO: AJAX!!
 router.get('/stargazers/:username/nasa/archive', function(req, res, next){
   //set up table of NASA Exoplanets and GET form for filtering exoplanets
@@ -44,7 +55,7 @@ router.get('/stargazers/:username/nasa/archive', function(req, res, next){
 });
 
 
-//-------------------------------- Create New List----------------------------//
+//------------------------------(GET) NEW LIST--------------------------------//
 
 /*Create a new list form */
 router.get('/stargazers/:username/newList', function(req, res, next){
@@ -58,7 +69,7 @@ router.get('/stargazers/:username/newList', function(req, res, next){
   res.render('newList');
 });
 
-//TODO: PARSLEY FRONTEND VALIDATION
+//----------------------------(POST) NEW LIST---------------------------------//
 router.post('/stargazers/:username/newList', function(req, res, next){
   //add this list and its exoplanets to the user object
   var username = req.params.username;
@@ -84,7 +95,7 @@ router.post('/stargazers/:username/newList', function(req, res, next){
   });
 });
 
-//-------------------------------- GET User List----------------------------//
+//--------------------------------(GET) SHOW LIST----------------------------//
 
 //TODO: AJAX!!!
 router.get('/stargazers/:username/:listName/', function(req, res, next){
@@ -104,6 +115,9 @@ router.get('/stargazers/:username/:listName/', function(req, res, next){
   //did they just update a planet?
   var updated = req.session.updated;
 
+  //did they just delete a planet?
+  var deleted = req.session.deleted;
+
   if(notNASA){
     message = "Your planet wasn't found in the NASA database! Please try again.\n";
     req.session.notNASA = false;
@@ -118,8 +132,11 @@ router.get('/stargazers/:username/:listName/', function(req, res, next){
     message = "That's a duplicate planet! It's already in your list! (Hint: Check your NASA Observed)";
     req.session.duplicate = false;
   }else if(updated){
-    message = "Your exoplanet has been successefully updated!";
+    message = "Your exoplanet has been successfully updated!";
     req.session.updated = false;
+  }else if(deleted){
+    message = "Your exoplanet has been successfully deleted!";
+    req.session.deleted = false;
   }
 
   var listName = req.params.listName;
@@ -181,7 +198,7 @@ router.get('/stargazers/:username/:listName/', function(req, res, next){
   });
 });
 
-//-----------------------Select Exoplanet to Edit/Delete----------------------//
+//---------------------(GET)SELECT PLANET TO EDIT/DELETE--------------------//
 router.get('/stargazers/:username/:listName/selectExoplanets', function(req, res, next){
 
   var username = req.params.username;
@@ -222,12 +239,13 @@ router.get('/stargazers/:username/:listName/selectExoplanets', function(req, res
       }
   });
 });
-/*Post for submitting an edit/delete request for a list - simply a redirect route*/
+//---------------------(POST)SELECT PLANET TO EDIT/DELETE----------------------//
 router.post('/stargazers/:username/:listName/selectExoplanets', function(req, res, next){
   var username = req.params.username;
   var listName = req.params.listName;
 
   var checkedPlanets = req.body.planets; //array of checked values
+  console.log("Checked planet values are: " + checkedPlanets);
   var button = req.body.select;
   if(!checkedPlanets){ //FIXME PARSLEY EDITING HERE
     req.session.notChecked = "Please select at least one exoplanet";
@@ -240,24 +258,29 @@ router.post('/stargazers/:username/:listName/selectExoplanets', function(req, re
     var PlanetLetter = planetData[0];
     var Distance = Number(planetData[1]);
     var TemperatureK = Number(planetData[2]);
+
     var searchObject = {
       PlanetLetter: PlanetLetter,
       Distance: Distance,
       TemperatureK: TemperatureK
     };
+
     Exoplanet.findOne(searchObject, function(err, planet){
       var planetID = planet._id;
       console.log("PLANET ID: " + planetID);
+
       User.findOne({username: username}, function(err, user){
         var id = user._id;
+
         List.findOne({name: listName, user: ObjectId(id)}, function(err, list){
-          console.log("LIST[0]: " + list.planets[0]);
-          console.log("ID FOR LIST[0]" + list.planets[0]._id);
           if(!list){res.send('list is null');}
+
           list.planets.id(planetID).remove();
+
           list.save(function(err){
             if(err){ res.send(err);}
             console.log("Subdocument was removed");
+            req.session.deleted = true;
             res.redirect('/stargazers/' + username +'/' + listName +'/');
           });
         });

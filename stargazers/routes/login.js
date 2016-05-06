@@ -1,3 +1,9 @@
+/* Radhika Mattoo
+   Applied Internet Tech Spring 2016
+   Final Project: Stargazers
+   This file is routers for logging in/signing up 
+*/
+
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
@@ -8,7 +14,7 @@ var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 LocalStrategy = require('passport-local').Strategy;
 
-/* GET home page. */
+//-------------------------(GET)HOME PAGE (SIGN UP)----------------------------//
 router.get('/', function(req, res, next) {
   if(req.session.invalidURL){ //user tried accessing page w/o logging in/signing up
     req.session.invalidURL = false;
@@ -25,7 +31,7 @@ router.get('/', function(req, res, next) {
   }
 });
 
-/* Login/Signup redirect */
+//-------------------------(POST) HOME PAGE -------------------------------//
 router.post('/', function(req, res, next){
   console.log("REQ.USER: ", req.user);
   var username = req.body.username;
@@ -104,7 +110,7 @@ router.post('/', function(req, res, next){
   }
 });
 
-/*Old user login*/
+//-------------------------(GET) LOGIN----------------------------//
 router.get('/login', function(req, res, next){
   //redirected back here if the login is incorrect
   if(req.session.failure){
@@ -115,6 +121,7 @@ router.get('/login', function(req, res, next){
   }
 });
 
+//-------------------------FACEBOOK LOGIN/SIGNUP ROUTERS----------------------------//
 
 /* Old user login submission, implement a local strategy from Passport since they don't want to sign in with Facebook */
 router.post('/login', passport.authenticate('local',{ successRedirect: '/success', failureRedirect: '/failure',  failureFlash: true}));
@@ -140,10 +147,6 @@ router.get('/facebookLogin', function(req, res, next){
   //so just redirect to their profile page, since now we have access to req obj
   req.session.username = req.user.username;
   console.log("Session username: " + req.user.username);
-  //are they already a user? set up otherwise
-
-
-
   res.redirect('/stargazers/' + req.user.username);
 });
 
@@ -159,9 +162,10 @@ router.get('/success', function(req, res, next){
   req.session.username = req.user.username;
   res.redirect('/stargazers/' + req.user.username);
 });
+//----------------------------------------------------------------------------//
 
 
-/* Profile Page */
+//-------------------------(GET) PROFILE ----------------------------//
 router.get('/stargazers/:username', function(req, res, next){
   //get user's full name and their Lists via mongoose
 
