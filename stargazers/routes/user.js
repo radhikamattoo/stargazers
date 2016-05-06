@@ -7,6 +7,8 @@ var List = mongoose.model('List');
 var ObjectId = require('mongodb').ObjectID;
 
 
+//----------------------------------- LOGOUT----------------------------------//
+
 /*User wants to log out!*/
 router.get("/stargazers/:username/logout", function(req, res, next){
   req.session.username = null;
@@ -14,8 +16,8 @@ router.get("/stargazers/:username/logout", function(req, res, next){
   res.redirect('/');
 });
 
-
-/* NASA Archive List */
+//------------------------------- NASA Archive List----------------------------//
+//TODO: AJAX!!
 router.get('/stargazers/:username/nasa/archive', function(req, res, next){
   //set up table of NASA Exoplanets and GET form for filtering exoplanets
   var username = req.params.username;
@@ -41,12 +43,85 @@ router.get('/stargazers/:username/nasa/archive', function(req, res, next){
 
 });
 
-/* Specified User List */
-router.get('/stargazers/:username/:listName/', function(req, res, next){
-  var newPlanet = req.session.newPlanet;
-  if(newPlanet){
-    req.session.newPlanet = false;
+
+//-------------------------------- Create New List----------------------------//
+
+/*Create a new list form */
+router.get('/stargazers/:username/newList', function(req, res, next){
+  var username = req.params.username;
+  var listName = req.params.listName;
+  if(req.session.username !== username || req.session.username === undefined){
+    req.session.invalidURL = true;
+    res.redirect('/');
   }
+  //render the form for adding a list
+  res.render('newList');
+});
+
+//TODO: PARSLEY FRONTEND VALIDATION
+router.post('/stargazers/:username/newList', function(req, res, next){
+  //add this list and its exoplanets to the user object
+  var username = req.params.username;
+  var listName = req.params.listName;
+  var name = req.body.Name;
+  name = name.replace(/(?:^\w|[A-Z]|\b\w)/g, function(letter, index) {
+    return index === 0 ? letter.toLowerCase() : letter.toUpperCase();
+  }).replace(/\s+/g, ''); //camel case the input
+  console.log("camel cased name:" + name);
+
+  User.findOne({username:username}, function(err, user){
+    var id = user._id;
+    var list = new List({
+      user: id,
+      name:name,
+      created: new Date().toString(),
+      planets : []
+    });
+    list.save(function(err){
+      console.log("new list has been saved" + list);
+      res.redirect('/stargazers/' + username + '/');
+    });
+  });
+});
+
+//-------------------------------- GET User List----------------------------//
+
+//TODO: AJAX!!!
+router.get('/stargazers/:username/:listName/', function(req, res, next){
+  var message = null;
+  //did they try adding to NASA list, but their planet wasn't found?
+  var notNASA = req.session.notNASA;
+
+  //did they try to add to own list, but planet matched NASA exoplanet?
+  var matchedNASA = req.session.matchedNASA;
+
+  //did they just add a new planet successfully?
+  var newPlanet = req.session.newPlanet;
+
+  //did they try adding a duplicate?
+  var duplicate = req.session.duplicate;
+
+  //did they just update a planet?
+  var updated = req.session.updated;
+
+  if(notNASA){
+    message = "Your planet wasn't found in the NASA database! Please try again.\n";
+    req.session.notNASA = false;
+  }
+  else if(newPlanet){
+    message = "Your planet has been successfully added! Congratulations!";
+    req.session.newPlanet = false;
+  }else if(matchedNASA){
+    message = "Your planet matched a discovered NASA exoplanet - please check your Nasa Observed list for the new addition";
+    req.session.matchedNASA = false;
+  }else if(duplicate){
+    message = "That's a duplicate planet! It's already in your list! (Hint: Check your NASA Observed)";
+    req.session.duplicate = false;
+  }else if(updated){
+    message = "Your exoplanet has been successefully updated!";
+    req.session.updated = false;
+  }
+
   var listName = req.params.listName;
   var username = req.params.username;
 
@@ -55,6 +130,19 @@ router.get('/stargazers/:username/:listName/', function(req, res, next){
     req.session.invalidURL = true;
     res.redirect('/');
   }
+  //TODO: INSERT AJAX HERE
+  // //did they submit the GET form?
+  // var findObject = {list: ObjectID(li)}; //within this list specifically
+  // var form = false;
+  // if(req.query.hostname !== undefined && req.query.hostname !== ''){
+  //   findObject["HostName"] = req.query.hostname;
+  // }
+  // if(req.query.planetletter !== undefined && req.query.planetletter !== ''){
+  //   findObject["PlanetLetter"] = req.query.planetletter.toLowerCase();
+  // }
+  // if(req.query.temperature !== undefined && req.query.temperature !== ''){
+  //   findObject["TemperatureK"] = Number(req.query.temperature);
+  // }
   //get the id of the user to find the list they want!
   User.findOne({username:username}, function(err, user, count){
     // console.log(user , " for username: ", username);
@@ -69,194 +157,120 @@ router.get('/stargazers/:username/:listName/', function(req, res, next){
             var list = lists[i];
 
             //render the matching name
-            if(list.name.replace(/ +/g, "") === listName){
-              res.render('showList', {name: list.name, list:list.planets, ownList:true, username: username, linkName: list.name.replace(/ +/g, ""), newPlanet: newPlanet});
+            if(list.name === listName){ //mongodb name vs. params name are both camelcased, don't have to change
+              var humanReadableListName = list.name //now have to uncamelcase for hbs
+              // insert a space between lower & upper
+              .replace(/([a-z])([A-Z])/g, '$1 $2')
+              // space before last upper in a sequence followed by lower
+              .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
+              // uppercase the first character
+              .replace(/^./, function(str){ return str.toUpperCase(); });
+
+              if(listName === 'nasaObserved'){
+                res.render('showList', {name: humanReadableListName, list:list.planets,
+                ownList:true,username: username, linkName: list.name, message: message, nasaObserved:true});
+              }else{
+                res.render('showList', {name: humanReadableListName, list:list.planets,
+                ownList:true,username: username, linkName: list.name, message: message});
+              }
+
             }
           }
         });
       }
   });
-
-
 });
 
-/*Render form for adding an exoplanet */
-router.get('/stargazers/:username/:listName/add', function(req, res, next){
+//-----------------------Select Exoplanet to Edit/Delete----------------------//
+router.get('/stargazers/:username/:listName/selectExoplanets', function(req, res, next){
+
   var username = req.params.username;
   var listName = req.params.listName;
   if(req.session.username !== username || req.session.username === undefined){
     req.session.invalidURL = true;
     res.redirect('/');
   }
-  res.render('addExoplanet', {name: listName.replace(/([A-Z])/g, ' $1')});
-});
-
-/* Render the list with the new planet added */
-router.post('/stargazers/:username/:listName/add', function(req, res, next){
-  var username = req.params.username;
-  var listName = req.params.listName;
-  var date = new Date();
-
-  //get all form elements
-  var HostName = req.body.HostName;
-  var PlanetLetter = req.body.PlanetLetter;
-  var Discovery = req.body.Discovery;
-  var NumPlanetsInSystem = req.body.NumPlanetsInSystem;
-  var OrbitalPeriod = req.body.OrbitalPeriod;
-  var OrbitSemiMajorAxis = req.body.OrbitSemiMajorAxis;
-  var Eccentricity = req.body.Eccentricity;
-  var Inclination = req.body.Inclination;
-  var MassWRTJupiter = req.body.MassWRTJupiter;
-  var Density = req.body.Density;
-  var TVVFlag = req.body.TVVFlag;
-  var KeplerFieldFlag = req.body.KeplerFieldFlag;
-  var K2MissionFlag = req.body.K2MissionFlag;
-  var NumberOfNotes = req.body.NumberOfNotes;
-  var RAStr = req.body.RAStr;
-  var RA = req.body.RA;
-  var DecStr = req.body.DecStr;
-  var Dec = req.body.Dec;
-  var Distance = req.body.Distance;
-  var OpticalMagnitude = req.body.OpticalMagnitude;
-  var OpticalMagnitudeBand = req.body.OpticalMagnitudeBand;
-  var TemperatureK = req.body.TemperatureK;
-  var StellarMass = req.body.StellarMass;
-  var StellarRadius = req.body.StellarRadius;
-  var Updated = date.toString();
-
-
-
-  //here we would check if it's in the NASA list, or a planet in our system. If it is, and this list is not
-  //the NASA observed, add to NASA observed and redirect to NASA Observed page with
-  //message that it matched a NASA exoplanet
-
-  var exoplanet = new Exoplanet({
-    HostName: HostName,
-    PlanetLetter: PlanetLetter,
-    Discovery: Discovery,
-    NumPlanetsInSystem: NumPlanetsInSystem,
-    OrbitalPeriod: OrbitalPeriod,
-    OrbitSemiMajorAxis: OrbitSemiMajorAxis,
-    Eccentricity: Eccentricity,
-    Inclination: Inclination,
-    MassWRTJupiter: MassWRTJupiter,
-    Density: Density,
-    TVVFlag: TVVFlag,
-    KeplerFieldFlag: KeplerFieldFlag,
-    K2MissionFlag: K2MissionFlag,
-    NumberOfNotes: NumberOfNotes,
-    RAStr: RAStr,
-    RA: RA,
-    DecStr: DecStr,
-    Dec: Dec,
-    Distance: Distance,
-    OpticalMagnitude: OpticalMagnitude,
-    OpticalMagnitudeBand: OpticalMagnitudeBand,
-    TemperatureK: TemperatureK,
-    StellarMass: StellarMass,
-    StellarRadius: StellarRadius,
-    Updated: Updated,
-    NASA: false
-  });
-
-  exoplanet.save(function(err, planet){
-    if(err){ res.render('error', {error: err});}
-    User.findOne({username:username}, function(err, user){
-      if(err !== null){ res.send(err);}
-      if(user === null){res.send("User is null.");}
-      var id = user._id;
-
-      console.log("Querying by id: " + id + "\n\n\n");
-      //add back space if camelcased
-      var queryName = listName.replace(/([A-Z])/g, ' $1').trim();
-
-      List.find({user: ObjectId(id)}, function(err, lists){
-          if(!lists){res.send('list is null');}
-
-          var list = null;
-
+  //get the id of the user to find the list they want!
+  User.findOne({username:username}, function(err, user, count){
+      if(err !== null){ res.render('error', {error: err}); return;}
+      else if(user === null){res.send("USER IS NULL."); return;}
+      else{
+         var id = user._id;
+        //find all lists associated with that ID
+        List.find({user:id}, function(err, lists, count){
+          if(err !== null ){ res.send(err);}
           for(var i = 0; i < lists.length; i++){
-           list = lists[i];
-            if(list.name === queryName.trim()){
-              list.planets.push(exoplanet);
-              list.markModified(list.planets);
-              break;
+            var list = lists[i];
+            //render the matching name
+            if(list.name === listName){
+              var displayName = listName  // insert a space between lower & upper
+                .replace(/([a-z])([A-Z])/g, '$1 $2')
+                // space before last upper in a sequence followed by lower
+                .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
+                // uppercase the first character
+                .replace(/^./, function(str){ return str.toUpperCase(); });
+              if(listName === 'nasaObserved'){
+                res.render('selectExoplanets',{name: displayName,
+                  list:list.planets, ownList:true, username: username, nasaObserved:true});
+              }else{
+                res.render('selectExoplanets',{name: displayName, list:list.planets,
+                  ownList:true, username: username});
+              }
             }
           }
-          if(list){
-            list.save(function(err){
-              req.session.newPlanet = true;
-              res.redirect('/stargazers/' + username + "/" + listName);
-            });
-          }else{
-            res.send("List is null idk tbh");
-          }
-
-
-      });
-
-    });
+        });
+      }
   });
-
-
-
 });
-
-/*Render page but make each planet checkable for editing*/
-router.get('/stargazers/:username/:listName/selectExoplanets', function(req, res, next){
-  var username = req.params.username;
-  var listName = req.params.listName;
-  if(req.session.username !== username || req.session.username === undefined){
-    req.session.invalidURL = true;
-    res.redirect('/');
-  }
-  // //get the id of the user to find the list they want!
-  // User.findOne({username:username}, function(err, user, count){
-  //   // console.log(user , " for username: ", username);
-  //     if(err !== null){ res.render('error', {error: err}); return;}
-  //     else if(user === null){res.send("USER IS NULL."); return;}
-  //     else{
-  //        var id = user._id;
-  //       //find all lists associated with that ID
-  //       List.find({user:id}, function(err, lists, count){
-  //         if(err !== null ){ res.send(err);}
-  //         for(var i = 0; i < lists.length; i++){
-  //           var list = lists[i];
-  //
-  //           //render the matching name
-  //           if(list.name.replace(/ +/g, "") === listName){
-  //             res.render('selectExoplanets',{name: list.name, list:list.planets, ownList:true, username: username});
-  //           }
-  //         }
-  //       });
-  //     }
-  // });
-  res.render('selectExoplanets'/*,{name: list.name, list:list.planets, ownList:true, username: username}*/);
-
-
-});
-/*Edit or Delete checked planets, based on button pressed */
+/*Post for submitting an edit/delete request for a list - simply a redirect route*/
 router.post('/stargazers/:username/:listName/selectExoplanets', function(req, res, next){
   var username = req.params.username;
   var listName = req.params.listName;
 
-});
-
-
-/*Create a new list form */
-router.get('/stargazers/:username/newList', function(req, res, next){
-  var username = req.params.username;
-  var listName = req.params.listName;
-  if(req.session.username !== username || req.session.username === undefined){
-    req.session.invalidURL = true;
-    res.redirect('/');
+  var checkedPlanets = req.body.planets; //array of checked values
+  var button = req.body.select;
+  if(!checkedPlanets){ //FIXME PARSLEY EDITING HERE
+    req.session.notChecked = "Please select at least one exoplanet";
+    console.log(req.session.notChecked);
+    res.redirect('/stargazers/' + username + '/ ' + listName + ' /selectExoplanets');
+  }else if(button === "delete"){
+    //get the user
+    //delete and redirect to showlist
+    var planetData = checkedPlanets.split("_");
+    var PlanetLetter = planetData[0];
+    var Distance = Number(planetData[1]);
+    var TemperatureK = Number(planetData[2]);
+    var searchObject = {
+      PlanetLetter: PlanetLetter,
+      Distance: Distance,
+      TemperatureK: TemperatureK
+    };
+    Exoplanet.findOne(searchObject, function(err, planet){
+      var planetID = planet._id;
+      console.log("PLANET ID: " + planetID);
+      User.findOne({username: username}, function(err, user){
+        var id = user._id;
+        List.findOne({name: listName, user: ObjectId(id)}, function(err, list){
+          console.log("LIST[0]: " + list.planets[0]);
+          console.log("ID FOR LIST[0]" + list.planets[0]._id);
+          if(!list){res.send('list is null');}
+          list.planets.id(planetID).remove();
+          list.save(function(err){
+            if(err){ res.send(err);}
+            console.log("Subdocument was removed");
+            res.redirect('/stargazers/' + username +'/' + listName +'/');
+          });
+        });
+      });
+    });
+  }else if(button === "edit"){
+    //create session object consisting of edited planet info and redirect
+    req.session.checkedPlanets = checkedPlanets;
+    console.log("CHECKED PLANET IS: " + checkedPlanets);
+    res.redirect('/stargazers/' + username + '/' + listName + '/edit');
   }
-  //render the form for adding a list with max 3 planets in it.
 });
 
-router.post('/stargazers/:username/newList', function(req, res, next){
-  //add this list and its exoplanets to the user object
-});
 
 
 module.exports = router;

@@ -1,1 +1,102 @@
-Edit exoplanets selected from /selectedExoplanets route (redirect here )
+<h1> Edit an Exoplanet in {{name}} </h1>
+<p> NOTE: A red asterisk indicates a required field. </p>
+<div class="form group text-center">
+<form method="POST" action="">
+  <div class="form-group col-xs-4 col-md-offset-4">
+    <label class='control-label'> Host Name: </label>
+    <input class="form-control text-center" type="text" name="HostName" value= "{{planet.HostName}}">
+  </div>
+  <div class="form-group required col-xs-4 col-md-offset-4">
+    <label class='control-label'> Classification: </label>
+    <input class="form-control text-center" type="text" name="PlanetLetter" value="{{planet.PlanetLetter}}">
+  </div>
+  <div class="form-group col-xs-4 col-md-offset-4">
+    <label class='control-label'>Discovery Method: </label>
+    <input class="form-control text-center" type="text" name="Discovery" value="{{planet.Discovery}}">
+  </div>
+  <div class="form-group required col-xs-4 col-md-offset-4">
+    <label class='control-label'>Number of Planets in System:</label>
+    <input class="form-control text-center" type="Number" step="any" name="NumPlanetsInSystem" value="{{planet.NumPlanetsInSystem}}">
+  </div>
+  <div class="form-group required col-xs-4 col-md-offset-4">
+    <label class='control-label'>Orbital Period: </label>
+    <input class="form-control text-center" type="Number" step="any" name="OrbitalPeriod" value="{{planet.OrbitalPeriod}}">
+  </div>
+  <div class="form-group col-xs-4 col-md-offset-4">
+    <label class='control-label'>Orbit (Semi Major Axis):</label>
+    <input class="form-control text-center" type="Number" step="any"  name="OrbitSemiMajorAxis" value="{{planet.OrbitSemiMajorAxis}}">
+  </div>
+  <div class="form-group col-xs-4 col-md-offset-4">
+    <label class='control-label'>Eccentricity:</label>
+    <input class="form-control text-center" type="Number" step="any" name="Eccentricity" value="{{planet.Eccentricity}}">
+  </div>
+  <div class="form-group col-xs-4 col-md-offset-4">
+    <label class='control-label'>Inclination:</label>
+     <input class="form-control text-center" type="Number" step="any" name="Inclination" value="{{planet.Inclination}}">
+  </div>
+  <div class="form-group col-xs-4 col-md-offset-4">
+    <label class='control-label'>Mass (wrt. Jupiter): </label>
+    <input class="form-control text-center" type="Number" step="any" name="MassWRTJupiter" value="{{planet.MassWRTJupiter}}">
+  </div>
+  <div class="form-group col-xs-4 col-md-offset-4">
+    <label class='control-label'>Density:</label>
+    <input class="form-control text-center" type="Number" step="any" name="Density" value="{{planet.Density}}">
+  </div>
+  <div class="form-group col-xs-4 col-md-offset-4">
+    <label class='control-label'>TVV Flag: </label>
+    <input class="form-control text-center" type="Number" step="any" name="TVVFlag" value="{{planet.TVVFlag}}">
+  </div>
+  <div class="form-group col-xs-4 col-md-offset-4">
+    <label class='control-label'>Kepler Field Flag: </label>
+    <input class="form-control text-center" type="Number" step="any" name="KeplerFieldFlag" value="{{planet.KeplerFieldFlag}}">
+  </div>
+  <div class="form-group col-xs-4 col-md-offset-4">
+    <label class='control-label'>K2 Mission Flag: </label>
+    <input class="form-control text-center" type="Number" step="any" name="K2MissionFlag" value="{{planet.K2MissionFlag}}">
+  </div>
+  <div class="form-group col-xs-4 col-md-offset-4">
+    <label class='control-label'>RA (String):</label>
+    <input class="form-control text-center" type="text" name="RAStr" value="{{planet.RAStr}}">
+  </div>
+  <div class="form-group col-xs-4 col-md-offset-4">
+    <label class='control-label'>RA:</label>
+    <input class="form-control text-center" type="Number" step="any" name="RA" value="{{planet.RA}}">
+  </div>
+  <div class="form-group col-xs-4 col-md-offset-4">
+    <label class='control-label'>Dec (String):</label>
+    <input class="form-control text-center" type="text" name="DecStr" value="{{planet.DecStr}}">
+  </div>
+  <div class="form-group col-xs-4 col-md-offset-4">
+    <label class='control-label'>Dec:</label>
+    <input class="form-control" type="Number" step="any" name="Dec" value="{{planet.Dec}}">
+  </div>
+  <div class="form-group required col-xs-4 col-md-offset-4">
+    <label class='control-label'>Distance: </label>
+    <input class="form-control text-center" type="Number" step="any" name="Distance" value="{{planet.Distance}}">
+  </div>
+  <div class="form-group col-xs-4 col-md-offset-4">
+    <label class='control-label'>Optical Magnitude:</label>
+    <input class="form-control text-center" type="Number" step="any" name="OpticalMagnitude" value="{{planet.OpticalMagnitude}}">
+  </div>
+  <div class="form-group col-xs-4 col-md-offset-4">
+    <label class='control-label'>Optical Magnitude Band: </label>
+    <input class="form-control text-center" type="text" name="OpticalMagnitudeBand" value="{{planet.OpticalMagnitudeBand}}">
+  </div>
+  <div class="form-group required col-xs-4 col-md-offset-4">
+    <label class='control-label'>Temperature (K): </label>
+    <input class="form-control text-center" type="Number" step="any" name="TemperatureK" value="{{planet.StellarMass}}">
+  </div>
+  <div class="form-group required col-xs-4 col-md-offset-4">
+    <label class='control-label'>Stellar Mass:</label>
+    <input class="form-control text-center" type="Number" step="any" name="StellarMass" value="{{planet.StellarMass}}">
+  </div>
+  <div class="form-group required col-xs-4 col-md-offset-4">
+    <label class='control-label'>Stellar Radius: </label>
+    <input class="form-control text-center" type="Number" step="any" name="StellarRadius" value="{{planet.StellarRadius}}">
+  </div>
+  <input type="hidden" name="id" value="{{planet._id}}">
+  <div class="form-group col-xs-4 col-md-offset-4">
+    <button class="btn btn-primary" type="submit">Submit Changes </button<br> <br>
+    </div>
+</form>
+</div>

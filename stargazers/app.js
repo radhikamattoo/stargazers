@@ -25,6 +25,7 @@ var List = mongoose.model('List');
 
 var login = require('./routes/login');
 var user = require('./routes/user');
+var list = require('./routes/list');
 
 var app = express();
 
@@ -43,10 +44,10 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
-// app.use(function(req, res, next) {
-//   console.log('handling request for: ' + req.url + "\n\n");
-//   next();
-// });
+app.use(function(req, res, next) {
+  console.log('handling request for: ' + req.url + "\n\n");
+  next();
+});
 
 //Set up strategies for user authentication:
 
@@ -163,6 +164,7 @@ passport.deserializeUser(function(id, done) {
 
 app.use('/', login);
 app.use('/', user);
+app.use('/', list);
 
 
 

@@ -1,1 +1,74 @@
-Select exoplanets to edit or delete
+<h1> {{name}} </h1>
+<h4> Please select an exoplanet to edit or delete </h4>
+  <table class="table table-bordered table-hover table-striped">
+    <thead class="thead-inverse">
+    <tr>
+      <th> Select </th>
+      <th>Host Name </th>
+      <th >Planet Letter </th>
+      <th>Discovery </th>
+      <th >Planets in System</th>
+      <th >Orbital Period </th>
+      <th >Orbit (SemiMajor Axis) </th>
+      <th>Eccentricity </th>
+      <th>Inclination </th>
+      <th>Mass wrt Jupiter </th>
+      <th >Density </th>
+      <th>TVV Flag </th>
+      <th >Kepler Field Flag </th>
+      <th>K2 Mission Flag </th>
+      <th>Num Notes </th>
+      <th >RA (Str) </th>
+      <th >RA </th>
+      <th >Dec (Str)</th>
+      <th >Dec </th>
+      <th>Distance </th>
+      <th >Optical Magnitude </th>
+      <th>Optical Magnitude Band </th>
+      <th>Temperature (K) </th>
+      <th >Stellar Mass </th>
+      <th >Stellar Radius </th>
+      <th>Updated </th>
+    </tr>
+  </thead>
+  <form method='POST' action="">
+    {{#each list}}
+    <div class="checkbox">
+      <tr>
+        <td><input class="radio" type="radio" name="planets" value="{{PlanetLetter}}_{{Distance}}_{{TemperatureK}}" /></td>
+        <td>{{HostName}} </td>
+        <td>{{PlanetLetter}} </td>
+        <td>{{Discovery}} </td>
+        <td>{{NumPlanetsInSystem}} </td>
+        <td>{{OrbitalPeriod}} </td>
+        <td>{{OrbitSemiMajorAxis}} </td>
+        <td>{{Eccentricity}} </td>
+        <td>{{Inclination}} </td>
+        <td>{{MassWRTJupiter}} </td>
+        <td>{{Density}} </td>
+        <td>{{TVVFlag}} </td>
+        <td>{{KeplerFieldFlag}} </td>
+        <td>{{K2MissionFlag}} </td>
+        <td>{{NumberofNotes}} </td>
+        <td>{{RAStr}} </td>
+        <td>{{RA}} </td>
+        <td>{{DecStr}} </td>
+        <td>{{Dec}} </td>
+        <td>{{Distance}} </td>
+        <td>{{OpticalMagnitude}} </td>
+        <td>{{OpticalMagnitudeBand}} </td>
+        <td>{{TemperatureK}} </td>
+        <td>{{StellarMass}} </td>
+        <td>{{StellarRadius}} </td>
+        <td>{{Updated}} </td>
+      </tr>
+    </div>
+    {{/each}}
+  </table>
+  <div>
+    {{#unless nasaObserved}}
+      <p><input type="submit" class="btn btn-primary" role="button" name="select" value="edit"></p>
+    {{/unless}}
+    <p><input type="submit" class="btn btn-primary" role="button" name="select" value="delete"> </p>
+  </div>
+</form>

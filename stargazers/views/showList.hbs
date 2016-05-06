@@ -1,6 +1,6 @@
 <h1> {{name}} </h1>
-{{#if newPlanet}}
-  <h4> Your exoplanet has been added! Congratulations! </h4>
+{{#if message}}
+  <h4 class='error'> {{message}}</h4>
 {{/if}}
 {{#if list}}
     <p> Narrow your search by querying with a hostname, planet letter, or by temperature </p>
@@ -88,9 +88,13 @@
   <br> <h4> You haven't added any exoplanets yet! </h4> <br>
 {{/if}}
 {{#if ownList}}
-  <p><a class="btn btn-primary" href="/stargazers/{{username}}/{{linkName}}/add"> Add Exoplanet(s) </a></p>
+  <p><a class="btn btn-primary" href="/stargazers/{{username}}/{{linkName}}/add"> Add Exoplanet </a></p>
   {{#if list}}
-  <p><a class="btn btn-primary" href="/stargazers/{{username}}/{{linkName}}/selectExoplanets"> Delete/Edit Exoplanet(s) </a></p>
+    {{#if nasaObserved}}
+      <p><a class="btn btn-primary" href="/stargazers/{{username}}/{{linkName}}/selectExoplanets"> Delete Exoplanet </a></p>
+    {{else}}
+      <p><a class="btn btn-primary" href="/stargazers/{{username}}/{{linkName}}/selectExoplanets"> Delete/Edit Exoplanet </a></p>
+    {{/if}}
   {{/if}}
   {{#unless list}}
   <div class="form-group col-xs-4 col-md-offset-4">
