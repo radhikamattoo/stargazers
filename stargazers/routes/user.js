@@ -39,7 +39,8 @@ router.get('/stargazers/:username/nasa/archive', function(req, res, next){
 
   var findObject = {NASA: true};
   Exoplanet.find(findObject, function(err, planets, count){
-    res.render('showList', {name: 'NASA Exoplanet Archive', list:planets, username: username});
+    res.render('showList', {name: 'NASA Exoplanet Archive', list:planets,
+    username: username, listName: 'nasa', showList:true});
   });
 
 });
@@ -270,7 +271,7 @@ router.post('/stargazers/:username/:listName/selectExoplanets', function(req, re
 
 
 
-//------------------------------AJAX QUERY LIST--------------------------------//
+//------------------------------AJAX QUERY USER LIST--------------------------------//
 router.get('/stargazers/:username/:listName/ajax/query', function(req, res){
   var username = req.params.username;
   var listName = req.params.listName;
@@ -309,6 +310,7 @@ router.get('/stargazers/:username/:listName/ajax/query', function(req, res){
           for(var j = 0; j < planets.length; j++){
             var exoplanet = planets[j];
             if(listPlanet._id.toString() === exoplanet._id.toString()){
+              console.log("Found matching exoplanet from mongoose search " + listPlanet);
               exoplanets.push(exoplanet);
             }
           }
@@ -318,6 +320,39 @@ router.get('/stargazers/:username/:listName/ajax/query', function(req, res){
 
       });
     });
+  });
+
+});
+
+
+//------------------------------AJAX QUERY NASA ARCHIVE--------------------------------//
+router.get('/stargazers/:username/nasa/archive/ajax/query', function(req, res){
+  var username = req.params.username;
+  var listName = req.params.listName;
+  if(req.session.username !== username || req.session.username === undefined){
+    req.session.invalidURL = true;
+    res.redirect('/');
+  }
+  if(req.query.hostname === "" && req.query.planetLetter === "" && req.query.temperature === ""){
+      res.redirect('/stargazers/' + username +'/nasa/archive');
+  }
+  var requestObject = {NASA:true};
+  if(req.query.hostname !== undefined && req.query.hostname !== ""){
+    console.log('added host');
+    requestObject['HostName'] = req.query.hostname;
+  }
+  if(req.query.planetLetter !== undefined && req.query.planetLetter !== ""){
+    console.log('added planet letter');
+      requestObject['PlanetLetter'] = req.query.planetLetter;
+  }
+  if(req.query.temperature !== undefined && req.query.temperature != ""){
+    console.log('added temp');
+    requestObject['TemperatureK'] = req.query.temperature;
+  }
+
+  Exoplanet.find(requestObject, function(err, planets){
+    var jsonPlanets = {planets:planets};
+    res.json(jsonPlanets);
   });
 
 });

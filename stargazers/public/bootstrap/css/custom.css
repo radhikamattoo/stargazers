@@ -81,6 +81,9 @@ li{
 .error{
   color: red;
 }
+.hideMessage{
+  display: none;
+}
 
 #logout{
   padding: 4px 8px;
