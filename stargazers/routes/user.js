@@ -28,33 +28,21 @@ router.get("/stargazers/:username/logout", function(req, res, next){
 });
 
 //----------------------------(GET) NASA Archive List----------------------------//
-//TODO: AJAX!!
 router.get('/stargazers/:username/nasa/archive', function(req, res, next){
   //set up table of NASA Exoplanets and GET form for filtering exoplanets
   var username = req.params.username;
-  console.log("Session username from NASA archive: " + username);
-  //they haven't signed in!! they can't do that!
+  var listName = req.params.listName;
   if(req.session.username !== username || req.session.username === undefined){
     req.session.invalidURL = true;
     res.redirect('/');
   }
+
   var findObject = {NASA: true};
-  if(req.query.hostname !== undefined && req.query.hostname !== ''){
-    findObject["HostName"] = req.query.hostname;
-  }
-  if(req.query.planetletter !== undefined && req.query.planetletter !== ''){
-    findObject["PlanetLetter"] = req.query.planetletter.toLowerCase();
-  }
-  if(req.query.temperature !== undefined && req.query.temperature !== ''){
-    findObject["TemperatureK"] = Number(req.query.temperature);
-  }
   Exoplanet.find(findObject, function(err, planets, count){
     res.render('showList', {name: 'NASA Exoplanet Archive', list:planets, username: username});
   });
 
 });
-
-
 //------------------------------(GET) NEW LIST--------------------------------//
 
 /*Create a new list form */
@@ -96,8 +84,6 @@ router.post('/stargazers/:username/newList', function(req, res, next){
 });
 
 //--------------------------------(GET) SHOW LIST----------------------------//
-
-//TODO: AJAX!!!
 router.get('/stargazers/:username/:listName/', function(req, res, next){
   var message = null;
   //did they try adding to NASA list, but their planet wasn't found?
@@ -147,19 +133,6 @@ router.get('/stargazers/:username/:listName/', function(req, res, next){
     req.session.invalidURL = true;
     res.redirect('/');
   }
-  //TODO: INSERT AJAX HERE
-  // //did they submit the GET form?
-  // var findObject = {list: ObjectID(li)}; //within this list specifically
-  // var form = false;
-  // if(req.query.hostname !== undefined && req.query.hostname !== ''){
-  //   findObject["HostName"] = req.query.hostname;
-  // }
-  // if(req.query.planetletter !== undefined && req.query.planetletter !== ''){
-  //   findObject["PlanetLetter"] = req.query.planetletter.toLowerCase();
-  // }
-  // if(req.query.temperature !== undefined && req.query.temperature !== ''){
-  //   findObject["TemperatureK"] = Number(req.query.temperature);
-  // }
   //get the id of the user to find the list they want!
   User.findOne({username:username}, function(err, user, count){
     // console.log(user , " for username: ", username);
@@ -185,12 +158,13 @@ router.get('/stargazers/:username/:listName/', function(req, res, next){
 
               if(listName === 'nasaObserved'){
                 res.render('showList', {name: humanReadableListName, list:list.planets,
-                ownList:true,username: username, linkName: list.name, message: message, nasaObserved:true});
+                ownList:true, username: username, linkName: list.name, message: message,
+                nasaObserved:true, listName: listName, showList: true});
               }else{
                 res.render('showList', {name: humanReadableListName, list:list.planets,
-                ownList:true,username: username, linkName: list.name, message: message});
+                ownList:true,username: username, linkName: list.name, message: message,
+                listName: listName, showList: true});
               }
-
             }
           }
         });
@@ -294,6 +268,59 @@ router.post('/stargazers/:username/:listName/selectExoplanets', function(req, re
   }
 });
 
+
+
+//------------------------------AJAX QUERY LIST--------------------------------//
+router.get('/stargazers/:username/:listName/ajax/query', function(req, res){
+  var username = req.params.username;
+  var listName = req.params.listName;
+  if(req.session.username !== username || req.session.username === undefined){
+    req.session.invalidURL = true;
+    res.redirect('/');
+  }
+  if(req.query.hostname === "" && req.query.planetLetter === "" && req.query.temperature === ""){
+      res.redirect('/stargazers/' + username + '/' + listName);
+  }
+  var requestObject = {};
+
+  if(req.query.hostname !== undefined && req.query.hostname !== ""){
+    console.log('added host');
+    requestObject['HostName'] = req.query.hostname;
+  }
+  if(req.query.planetLetter !== undefined && req.query.planetLetter !== ""){
+    console.log('added planet letter');
+      requestObject['PlanetLetter'] = req.query.planetLetter;
+  }
+  if(req.query.temperature !== undefined && req.query.temperature != ""){
+    console.log('added temp');
+    requestObject['TemperatureK'] = req.query.temperature;
+  }
+
+  Exoplanet.find(requestObject, function(err, planets){
+    //get user, get list, query in that list for exoplanets
+    User.findOne({username:username}, function(err, user){
+      var id = user._id;
+      List.findOne({name: listName, user: ObjectId(id)}, function(err, list){
+        var exoplanets = [];
+        var listLength = list.planets.length;
+        var planetListLength = planets.length;
+        for(var i = 0; i < list.planets.length; i++){
+          var listPlanet = list.planets[i];
+          for(var j = 0; j < planets.length; j++){
+            var exoplanet = planets[j];
+            if(listPlanet._id.toString() === exoplanet._id.toString()){
+              exoplanets.push(exoplanet);
+            }
+          }
+        }//end nested loop
+        var jsonPlanets = {planets:exoplanets};
+        res.json(jsonPlanets);
+
+      });
+    });
+  });
+
+});
 
 
 module.exports = router;
