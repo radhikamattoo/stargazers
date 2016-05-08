@@ -8,7 +8,7 @@
     <input class="form-control text-center" type="text" name="HostName" placeholder="11 Com">
   </div>
   <div class="form-group required col-xs-4 col-md-offset-4">
-    <label class='control-label'> Classification (m, k, g, h, a, b, o): </label>
+    <label class='control-label'> Classification (b, c, d, e, f, g, h, i, j): </label>
     <input class="form-control text-center" type="text" name="PlanetLetter" placeholder="B">
   </div>
   <div class="form-group col-xs-4 col-md-offset-4">
@@ -154,15 +154,15 @@ var validator = new FormValidator('add', [{
     }
 });
 validator.registerCallback('check_Letter', function(value) {
-    //(M, K, G, F, A, B, O)
-    if (value === 'M' || value === 'K' || value === 'G' || value === 'F'
-    || value === 'A' || value === 'B' || value === 'O') {
+    //h, g, f, e, d, c, b
+    if (value === 'b' || value === 'c' || value === 'd' || value === 'e'
+    || value === 'f' || value === 'g' || value === 'h'  || value === 'i'  || value === 'j') {
         return true;
     }
 
     return false;
 })
-.setMessage('check_Letter', 'Classification must be a single capital letter: M, K, G, F, A, B, or O');
+.setMessage('check_Letter', 'Classification must be a single lowercase letter: b, c, d, e, f, g, h, i, j');
 
 
 

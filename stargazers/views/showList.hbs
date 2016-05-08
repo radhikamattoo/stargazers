@@ -27,16 +27,13 @@
   <div class="form-group col-xs-4 col-md-offset-4">
     {{#if ownList}}
       <p><a class="btn btn-primary" href="/stargazers/{{username}}/{{linkName}}/add"> Add Exoplanet </a></p>
-      {{#if list}}
         {{#if nasaObserved}}
           <p><a class="btn btn-primary" href="/stargazers/{{username}}/{{linkName}}/selectExoplanets"> Delete Exoplanet </a></p>
         {{else}}
           <p><a class="btn btn-primary" href="/stargazers/{{username}}/{{linkName}}/selectExoplanets"> Delete/Edit Exoplanet </a></p>
         {{/if}}
-      {{/if}}
-      {{else}}
-        <p><a href="/stargazers/{{username}}" class="btn btn-secondary" role="button"> Back to Profile </a></p>
     {{/if}}
+      <p><a href="/stargazers/{{username}}" class="btn btn-secondary" role="button"> Back to Profile </a></p>
   </div> <br><br><br>
 
 
@@ -104,9 +101,12 @@
   </table>
 {{else}}
   <br> <h4> You haven't added any exoplanets yet! </h4> <br>
-{{/if}}
-{{#if ownList}}
-  <div class="form-group col-xs-4 col-md-offset-4">
+  {{#if ownList}}
+  <div>
+    <p><a class="btn btn-primary" href="/stargazers/{{username}}/{{linkName}}/add"> Add Exoplanet </a></p>
+  </div>
+  {{/if}}
+  <div class="col-xs-4 col-md-offset-4">
     <p><a href="/stargazers/{{username}}" class="btn btn-secondary" role="button"> Back to Profile </a></p>
   </div>
 {{/if}}

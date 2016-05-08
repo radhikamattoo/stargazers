@@ -131,7 +131,7 @@ router.get('/stargazers/:username/:listName/', function(req, res, next){
     message = "Your planet matched a discovered NASA exoplanet - please check your Nasa Observed list for the new addition";
     req.session.matchedNASA = false;
   }else if(duplicate){
-    message = "That's a duplicate planet! It's already in your list! (Hint: Check your NASA Observed)";
+    message = "That's a duplicate planet -  it's already in your list! (Hint: Check your NASA Observed too)";
     req.session.duplicate = false;
   }else if(updated){
     message = "Your exoplanet has been successfully updated!";
