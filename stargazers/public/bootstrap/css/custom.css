@@ -1,24 +1,25 @@
-h1, h2{
+body{
+  background: url('http://static.ddmcdn.com/gif/blogs/dnews-files-2015-01-hubble-galaxy-wide-150130-jpg.jpg');
+  color:white;
+}
+h1, h2, h4{
   color: #0099cc;
 }
 
 table {
 	font-family:Arial, Helvetica, sans-serif;
 	font-size:11px;
-	text-shadow: 1px 1px 0px #fff;
-	background:#eaebec;
-	margin:20px;
+  margin:20px;
+  color:white;
+  font-size: 1.1em;
 }
 table th {
 	padding:21px 25px 22px 25px;
 	border-top:1px solid #fafafa;
 	border-bottom:1px solid #e0e0e0;
-	background: #black;
+  text-align: center;
 }
 
-body{
-  background-color: #f1e8dc;
-}
 
 li{
   list-style: none;

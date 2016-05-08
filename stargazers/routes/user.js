@@ -17,12 +17,12 @@ var User = mongoose.model('User');
 var List = mongoose.model('List');
 var ObjectId = require('mongodb').ObjectID;
 
-
 //----------------------------------- LOGOUT----------------------------------//
 
 /*User wants to log out!*/
 router.get("/stargazers/:username/logout", function(req, res, next){
-  req.session.username = null;
+  req.session.username = undefined;
+  req.session.userID = undefined;
   req.session.loggedOut = true;
   res.redirect('/');
 });
@@ -32,7 +32,7 @@ router.get('/stargazers/:username/nasa/archive', function(req, res, next){
   //set up table of NASA Exoplanets and GET form for filtering exoplanets
   var username = req.params.username;
   var listName = req.params.listName;
-  if(req.session.username !== username || req.session.username === undefined){
+  if(req.session.userID === undefined || req.session.username === undefined){
     req.session.invalidURL = true;
     res.redirect('/');
   }
@@ -50,7 +50,7 @@ router.get('/stargazers/:username/nasa/archive', function(req, res, next){
 router.get('/stargazers/:username/newList', function(req, res, next){
   var username = req.params.username;
   var listName = req.params.listName;
-  if(req.session.username !== username || req.session.username === undefined){
+  if(req.session.userID === undefined || req.session.username === undefined){
     req.session.invalidURL = true;
     res.redirect('/');
   }
@@ -69,23 +69,31 @@ router.post('/stargazers/:username/newList', function(req, res, next){
   }).replace(/\s+/g, ''); //camel case the input
   console.log("camel cased name:" + name);
 
-  User.findOne({username:username}, function(err, user){
-    var id = user._id;
-    var list = new List({
-      user: id,
-      name:name,
-      created: new Date().toString(),
-      planets : []
-    });
-    list.save(function(err){
-      console.log("new list has been saved" + list);
-      res.redirect('/stargazers/' + username + '/');
-    });
+  var id = req.session.userID;
+  var list = new List({
+    user: id,
+    name:name,
+    created: new Date().toString(),
+    planets : []
   });
-});
+  list.save(function(err){
+    console.log("new list has been saved" + list);
+    res.redirect('/stargazers/' + username + '/');
+  });
 
+});
 //--------------------------------(GET) SHOW LIST----------------------------//
 router.get('/stargazers/:username/:listName/', function(req, res, next){
+  var listName = req.params.listName;
+  var username = req.params.username;
+
+  //make sure they've logged in
+  if(req.session.userID === undefined || req.session.username === undefined){
+    req.session.invalidURL = true;
+    res.redirect('/');
+  }
+
+
   var message = null;
   //did they try adding to NASA list, but their planet wasn't found?
   var notNASA = req.session.notNASA;
@@ -126,51 +134,37 @@ router.get('/stargazers/:username/:listName/', function(req, res, next){
     req.session.deleted = false;
   }
 
-  var listName = req.params.listName;
-  var username = req.params.username;
+    var id = ObjectId(req.session.userID);
 
-  //make sure they've logged in
-  if(req.session.username !== username || req.session.username === undefined){
-    req.session.invalidURL = true;
-    res.redirect('/');
-  }
-  //get the id of the user to find the list they want!
-  User.findOne({username:username}, function(err, user, count){
-    // console.log(user , " for username: ", username);
-      if(err !== null){ res.render('error', {error: err}); return;}
-      else if(user === null){res.send("USER IS NULL."); return;}
-      else{
-         var id = user._id;
-        //find all lists associated with that ID
-        List.find({user:id}, function(err, lists, count){
-          if(err !== null ){ res.send(err);}
-          for(var i = 0; i < lists.length; i++){
-            var list = lists[i];
+    //find all lists associated with that ID
+    List.find({user:id}, function(err, lists, count){
+      if(err !== null ){ res.send(err);}
+      lists.forEach(function(list){
+        //render the matching name
+        if(list.name === listName){ //mongodb name vs. params name are both camelcased, don't have to change
 
-            //render the matching name
-            if(list.name === listName){ //mongodb name vs. params name are both camelcased, don't have to change
-              var humanReadableListName = list.name //now have to uncamelcase for hbs
-              // insert a space between lower & upper
-              .replace(/([a-z])([A-Z])/g, '$1 $2')
-              // space before last upper in a sequence followed by lower
-              .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
-              // uppercase the first character
-              .replace(/^./, function(str){ return str.toUpperCase(); });
+          var humanReadableListName = list.name //now have to uncamelcase for hbs
+          // insert a space between lower & upper
+          .replace(/([a-z])([A-Z])/g, '$1 $2')
+          // space before last upper in a sequence followed by lower
+          .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
+          // uppercase the first character
+          .replace(/^./, function(str){ return str.toUpperCase(); });
 
-              if(listName === 'nasaObserved'){
-                res.render('showList', {name: humanReadableListName, list:list.planets,
-                ownList:true, username: username, linkName: list.name, message: message,
-                nasaObserved:true, listName: listName, showList: true});
-              }else{
-                res.render('showList', {name: humanReadableListName, list:list.planets,
-                ownList:true,username: username, linkName: list.name, message: message,
-                listName: listName, showList: true});
-              }
-            }
+          //if its the nasa observed, you can't show the 'Edit' part of the button,
+          //only the 'Delete' portion.
+          if(listName === 'nasaObserved'){
+            res.render('showList', {name: humanReadableListName, list:list.planets,
+            ownList:true, username: username, linkName: list.name, message: message,
+            nasaObserved:true, listName: listName, showList: true});
+          }else{//User's own observed planets
+            res.render('showList', {name: humanReadableListName, list:list.planets,
+            ownList:true,username: username, linkName: list.name, message: message,
+            listName: listName, showList: true});
           }
-        });
-      }
-  });
+        }
+      });
+    });
 });
 
 //---------------------(GET)SELECT PLANET TO EDIT/DELETE--------------------//
@@ -178,40 +172,36 @@ router.get('/stargazers/:username/:listName/selectExoplanets', function(req, res
 
   var username = req.params.username;
   var listName = req.params.listName;
-  if(req.session.username !== username || req.session.username === undefined){
+  //make sure they've logged in
+  if(req.session.userID === undefined || req.session.username === undefined){
     req.session.invalidURL = true;
     res.redirect('/');
   }
+
   //get the id of the user to find the list they want!
-  User.findOne({username:username}, function(err, user, count){
-      if(err !== null){ res.render('error', {error: err}); return;}
-      else if(user === null){res.send("USER IS NULL."); return;}
-      else{
-         var id = user._id;
-        //find all lists associated with that ID
-        List.find({user:id}, function(err, lists, count){
-          if(err !== null ){ res.send(err);}
-          for(var i = 0; i < lists.length; i++){
-            var list = lists[i];
-            //render the matching name
-            if(list.name === listName){
-              var displayName = listName  // insert a space between lower & upper
-                .replace(/([a-z])([A-Z])/g, '$1 $2')
-                // space before last upper in a sequence followed by lower
-                .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
-                // uppercase the first character
-                .replace(/^./, function(str){ return str.toUpperCase(); });
-              if(listName === 'nasaObserved'){
-                res.render('selectExoplanets',{name: displayName,
-                  list:list.planets, ownList:true, username: username, nasaObserved:true});
-              }else{
-                res.render('selectExoplanets',{name: displayName, list:list.planets,
-                  ownList:true, username: username});
-              }
-            }
-          }
-        });
+   var id = ObjectId(req.session.userID);
+  //find all lists associated with that ID
+  List.find({user:id}, function(err, lists, count){
+    if(err !== null ){ res.send(err);}
+
+    lists.forEach(function(list){
+      //render the matching name
+      if(list.name === listName){
+        var displayName = listName  // insert a space between lower & upper
+          .replace(/([a-z])([A-Z])/g, '$1 $2')
+          // space before last upper in a sequence followed by lower
+          .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
+          // uppercase the first character
+          .replace(/^./, function(str){ return str.toUpperCase(); });
+        if(listName === 'nasaObserved'){
+          res.render('selectExoplanets',{name: displayName, listName: listName,
+            list:list.planets, ownList:true, username: username, nasaObserved:true});
+        }else{
+          res.render('selectExoplanets',{name: displayName, list:list.planets,
+            ownList:true, username: username, listName: listName});
+        }
       }
+    });
   });
 });
 //---------------------(POST)SELECT PLANET TO EDIT/DELETE----------------------//
@@ -222,6 +212,7 @@ router.post('/stargazers/:username/:listName/selectExoplanets', function(req, re
   var checkedPlanets = req.body.planets; //array of checked values
   console.log("Checked planet values are: " + checkedPlanets);
   var button = req.body.select;
+
   if(!checkedPlanets){ //FIXME PARSLEY EDITING HERE
     req.session.notChecked = "Please select at least one exoplanet";
     console.log(req.session.notChecked);
@@ -244,13 +235,17 @@ router.post('/stargazers/:username/:listName/selectExoplanets', function(req, re
       var planetID = planet._id;
       console.log("PLANET ID: " + planetID);
 
-      User.findOne({username: username}, function(err, user){
-        var id = user._id;
+      // User.findOne({username: username}, function(err, user){
+        var id = req.session.userID;
 
         List.findOne({name: listName, user: ObjectId(id)}, function(err, list){
           if(!list){res.send('list is null');}
 
+          //remove it from the lists' exoplanet property
           list.planets.id(planetID).remove();
+
+          //remove it from the exoplanets collection
+          Exoplanet.find({_id: ObjectId(planetID)}).remove().exec();
 
           list.save(function(err){
             if(err){ res.send(err);}
@@ -259,7 +254,7 @@ router.post('/stargazers/:username/:listName/selectExoplanets', function(req, re
             res.redirect('/stargazers/' + username +'/' + listName +'/');
           });
         });
-      });
+      // });
     });
   }else if(button === "edit"){
     //create session object consisting of edited planet info and redirect
@@ -268,22 +263,22 @@ router.post('/stargazers/:username/:listName/selectExoplanets', function(req, re
     res.redirect('/stargazers/' + username + '/' + listName + '/edit');
   }
 });
-
-
-
 //------------------------------AJAX QUERY USER LIST--------------------------------//
 router.get('/stargazers/:username/:listName/ajax/query', function(req, res){
   var username = req.params.username;
   var listName = req.params.listName;
-  if(req.session.username !== username || req.session.username === undefined){
+  //make sure they've logged in
+  if(req.session.userID === undefined || req.session.username === undefined){
     req.session.invalidURL = true;
     res.redirect('/');
   }
+
   if(req.query.hostname === "" && req.query.planetLetter === "" && req.query.temperature === ""){
-      res.redirect('/stargazers/' + username + '/' + listName);
+      res.json({planets:{}});
   }
   var requestObject = {};
 
+  console.log("query hostname: " + req.query.hostname);
   if(req.query.hostname !== undefined && req.query.hostname !== ""){
     console.log('added host');
     requestObject['HostName'] = req.query.hostname;
@@ -324,15 +319,16 @@ router.get('/stargazers/:username/:listName/ajax/query', function(req, res){
 
 });
 
-
 //------------------------------AJAX QUERY NASA ARCHIVE--------------------------------//
 router.get('/stargazers/:username/nasa/archive/ajax/query', function(req, res){
   var username = req.params.username;
   var listName = req.params.listName;
-  if(req.session.username !== username || req.session.username === undefined){
+  //make sure they've logged in
+  if(req.session.userID === undefined || req.session.username === undefined){
     req.session.invalidURL = true;
     res.redirect('/');
   }
+
   if(req.query.hostname === "" && req.query.planetLetter === "" && req.query.temperature === ""){
       res.redirect('/stargazers/' + username +'/nasa/archive');
   }

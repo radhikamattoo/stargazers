@@ -1,7 +1,7 @@
 /* Radhika Mattoo
    Applied Internet Tech Spring 2016
    Final Project: Stargazers
-   This file is routers for logging in/signing up 
+   This file is routers for logging in/signing up
 */
 
 var express = require('express');
@@ -13,6 +13,7 @@ var List = mongoose.model('List');
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 LocalStrategy = require('passport-local').Strategy;
+var ObjectId = require('mongodb').ObjectID;
 
 //-------------------------(GET)HOME PAGE (SIGN UP)----------------------------//
 router.get('/', function(req, res, next) {
@@ -54,6 +55,8 @@ router.post('/', function(req, res, next){
       }else{
         //save newly created user
         user.save(function(err, user, count){
+          console.log("Saving new user id to the session");
+          req.session.userID = user._id;
           if(err){ res.render('error', {error: err});}
           else if(user === null){res.send("USER IS NULL."); return;}
           //create the 2 default lists for each user
@@ -146,7 +149,8 @@ router.get('/facebookLogin', function(req, res, next){
   //from passport.deserializeUser, we have the username stored in req.user
   //so just redirect to their profile page, since now we have access to req obj
   req.session.username = req.user.username;
-  console.log("Session username: " + req.user.username);
+  req.session.userID = req.user._id;
+  console.log("RETURN OBJ: " + req.user);
   res.redirect('/stargazers/' + req.user.username);
 });
 
@@ -160,6 +164,8 @@ router.get('/failure', function(req, res, next){
 router.get('/success', function(req, res, next){
   console.log("Authenticated!");
   req.session.username = req.user.username;
+  req.session.userID = req.user._id;
+  console.log("User id: " + req.session.userID);
   res.redirect('/stargazers/' + req.user.username);
 });
 //----------------------------------------------------------------------------//
@@ -171,19 +177,18 @@ router.get('/stargazers/:username', function(req, res, next){
 
   var username = req.params.username;
   //they haven't signed in!! they can't do that!
-  if(req.session.username !== username || req.session.username === undefined){
+  if(req.session.userID === undefined || req.session.username === undefined){
     req.session.invalidURL = true;
     res.redirect('/');
   }
-  User.findOne({username:username}, function(err, user){
-    if(err !== null || user === null){ res.send(err);}
-    var header = "Hello, " + user.name + ".";
-    var id = user._id;
 
+  User.findOne({_id:ObjectId(req.session.userID)}, function(err, user){
+    var displayName = user.name.charAt(0).toUpperCase() + user.name.slice(1);
+    var header = "Hello, " + displayName + ".";
+    var id = user._id;
     //find all lists associated with user id
     List.find({user: id}, function(err, lists, count){
       var listObject = {};
-
       //parse lists to display names and links nicely in hbs
       for(var i = 0; i < lists.length; i++){
         var humanReadableListName = lists[i].name
@@ -197,10 +202,11 @@ router.get('/stargazers/:username', function(req, res, next){
         console.log("Uncamelcased list name:" + humanReadableListName);
 
         listObject[i] = {
-          link: '/stargazers/'+ user.username + "/" + lists[i].name, //camel cased
+          link: '/stargazers/'+ username + "/" + lists[i].name, //camel cased
           name: humanReadableListName //uncamelcased
         };
       }
+
       res.render('profile', {header:header, lists:listObject, username:username});
 
     });//List find

@@ -28,9 +28,9 @@
     <p><a href="/stargazers/{{username}}" class="btn btn-secondary" role="button"> Back to Profile </a></p>
   </div> <br><br><br>
 
-  <table class="table table-bordered table-hover table-striped">
+  <table class="table table-bordered table-condensed table-nonfluid" align='center'>
     <thead class="thead-inverse">
-    <tr>
+    <tr  class='text-center'>
       <th >Host Name </th>
       <th >Planet Letter </th>
       <th>Discovery </th>
@@ -60,7 +60,7 @@
   </thead>
     <tbody id="planet-list">
     {{#each list}}
-      <tr>
+      <tr  class='text-center'>
         <td>{{HostName}} </td>
         <td>{{PlanetLetter}} </td>
         <td>{{Discovery}} </td>

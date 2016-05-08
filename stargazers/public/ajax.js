@@ -10,6 +10,7 @@ function init(){
   message.classList.add('hideMessage');
   console.log("Message class list: " + message.classList);
   info.appendChild(message);
+
   filter(message);
 }
 function filter(message){
@@ -17,6 +18,12 @@ function filter(message){
   document.getElementById("search").addEventListener('click', function(evt){
     //dont submit form
     evt.preventDefault();
+
+    //clear error message, if exists
+    var errorMessage = document.querySelector('.error');
+    if(document.contains(errorMessage)){
+      errorMessage.classList.add('hideMessage');
+    }
 
     var HostName = document.getElementById('hostname').value;
     var PlanetLetter = document.getElementById('planetletter').value;
