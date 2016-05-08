@@ -1,13 +1,13 @@
 <h1>Stargazer's Collection</h1>
-<h4>Welcome!</h4> <br>
+<h4>Welcome Back!</h4> <br>
 
 {{#if error}}
   <p class="error"> {{error}} Please try again. </p>
 {{/if}}
 <a class="btn btn-primary-outline" role="button" href="/auth/facebook" >Login with Facebook</a><br> <br>
   OR <br><br>
-  <form method="POST" action="">
-  Username: <input type="text" name="username"> <br><br>
-  Password: <input type="password" name="password"> <br> <br>
-  <button class="btn btn-primary" type="submit" value="Log In">Login</button<br> <br>
+  <form method="POST" action="" id='login'>
+  Username: <input type="text" name="username" id='username'> <br><br>
+  Password: <input type="password" name="password" id='password'> <br> <br>
+  <button class="btn btn-primary" type="submit" value="Log In" id='logInBtn'>Login</button<br> <br>
 </form>

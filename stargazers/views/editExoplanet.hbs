@@ -1,13 +1,14 @@
+<script type="text/javascript" src="../../../validate.min.js"></script>
 <h1> Edit an Exoplanet in {{name}} </h1>
 <p> NOTE: A red asterisk indicates a required field. </p>
 <div class="form group text-center">
-<form method="POST" action="">
+<form method="POST" action="" id='edit' name='edit'>
   <div class="form-group col-xs-4 col-md-offset-4">
     <label class='control-label'> Host Name: </label>
     <input class="form-control text-center" type="text" name="HostName" value= "{{planet.HostName}}">
   </div>
   <div class="form-group required col-xs-4 col-md-offset-4">
-    <label class='control-label'> Classification: </label>
+    <label class='control-label'> Classification (m, k, g, h, a, b, o): </label>
     <input class="form-control text-center" type="text" name="PlanetLetter" value="{{planet.PlanetLetter}}">
   </div>
   <div class="form-group col-xs-4 col-md-offset-4">
@@ -43,15 +44,15 @@
     <input class="form-control text-center" type="Number" step="any" name="Density" value="{{planet.Density}}">
   </div>
   <div class="form-group col-xs-4 col-md-offset-4">
-    <label class='control-label'>TVV Flag: </label>
+    <label class='control-label'>TVV Flag (0/1): </label>
     <input class="form-control text-center" type="Number" step="any" name="TVVFlag" value="{{planet.TVVFlag}}">
   </div>
   <div class="form-group col-xs-4 col-md-offset-4">
-    <label class='control-label'>Kepler Field Flag: </label>
+    <label class='control-label'>Kepler Field Flag (0/1): </label>
     <input class="form-control text-center" type="Number" step="any" name="KeplerFieldFlag" value="{{planet.KeplerFieldFlag}}">
   </div>
   <div class="form-group col-xs-4 col-md-offset-4">
-    <label class='control-label'>K2 Mission Flag: </label>
+    <label class='control-label'>K2 Mission Flag (0/1): </label>
     <input class="form-control text-center" type="Number" step="any" name="K2MissionFlag" value="{{planet.K2MissionFlag}}">
   </div>
   <div class="form-group col-xs-4 col-md-offset-4">
@@ -95,8 +96,10 @@
     <input class="form-control text-center" type="Number" step="any" name="StellarRadius" value="{{planet.StellarRadius}}">
   </div>
   <input type="hidden" name="id" value="{{planet._id}}">
+  <div id= 'errorDiv' class='error col-xs-4 col-md-offset-4'>
+  </div>  <br><br>
   <div class="form-group col-xs-4 col-md-offset-4">
-    <button class="btn btn-primary" type="submit">Submit Changes </button<br> <br>
+    <button class="btn btn-primary" type="submit" id='submit'>Submit Changes </button<br> <br>
   </div>
 </form>
 <div class="col-xs-4 col-md-offset-4">
@@ -104,3 +107,66 @@
 </div>
 
 </div>
+
+<script>
+var validator = new FormValidator('edit', [{
+  name: 'HostName',
+  display: 'Host Name',
+  rules: 'max_length[16]',
+}, {
+  name: 'PlanetLetter',
+  display: 'Classification',
+  rules: 'required|max_length[1]|alpha|callback_check_Letter'
+}, {
+  name: 'NumPlanetsInSystem',
+  display: 'Number of Planets in System',
+  rules: 'required'
+},{
+  name: 'OrbitalPeriod',
+  display: 'Orbital Period',
+  rules: 'required'
+}, {
+  name: 'Distance',
+  rules: 'required'
+}, {
+  name: 'TemperatureK',
+  display: 'Temperature',
+  rules: 'required'
+}, {
+  name: 'StellarMass',
+  display: 'Stellar Mass',
+  rules: 'required'
+}, {
+  name: 'StellarRadius',
+  display: 'Stellar Radius',
+  rules: 'required'
+}], function(errors, event){
+
+    if(errors.length > 0){
+      event.preventDefault(); //prevent submission
+      var errorString = '';
+      var errorLength = errors.length;
+        for (var i = 0; i < errorLength; i++) {
+            errorString += errors[i].message + '<br />';
+            var errorID = errors[i].id;
+        }
+        console.log(errorString);
+        var div = document.getElementById('errorDiv');
+        div.innerHTML = errorString;
+        console.log("Text is: " + text);
+    }
+});
+validator.registerCallback('check_Letter', function(value) {
+    //(M, K, G, F, A, B, O)
+    if (value === 'm' || value === 'k' || value === 'g' || value === 'f'
+    || value === 'a' || value === 'b' || value === 'o') {
+        return true;
+    }
+
+    return false;
+})
+.setMessage('check_Letter', 'Classification must be a single lowercase letter: m, k, g, h, a, b, or o');
+
+
+
+</script>

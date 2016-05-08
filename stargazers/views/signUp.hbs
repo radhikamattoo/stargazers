@@ -1,16 +1,54 @@
+<script type="text/javascript" src="validate.min.js"></script>
 <h1>Stargazer's Collection</h1>
 <h4>Welcome!</h4> <br>
 
+<div id= 'errorDiv' class='error'>
 {{#if error}}
   <br><br> <h4 class="error"> {{error}} </h4><br><br>
 {{/if}}
+</div> <br>
 
+<div>
 <a class="btn btn-primary-outline" href="/auth/facebook" role="button">Signup with Facebook</a> <br> <br>
+</div>
 
-<form method="POST" action="">
-Full Name: <input type="text" name="name"><br><br>
-Username: <input type="text" name="username"> <br><br>
-Password: <input type="password" name="password"> <br> <br>
-<button class="btn btn-primary" type="submit" value="Sign Up" name="userCheck">Sign Up </button><br><br>
-<button class="btn btn-secondary" type="submit" value="Sign In" name="userCheck"> Already a user? </button
+<form method="POST" action="" name='signup'>
+Full Name: <input type="text" name="name" id="fullname"><br><br>
+Username: <input type="text" name="username" id="username"> <br><br>
+Password: <input type="password" name="password" id="password"> <br> <br>
+<button class="btn btn-primary" type="submit" value="Sign Up" name="userCheck" id='signUpBtn'>Sign Up </button><br><br>
 </form>
+<div>
+  <p><a href="/login" class="btn btn-secondary" role="button"> Login </a></p><br>
+</div>
+
+<script>
+var validator = new FormValidator('signup', [{
+  name: 'name',
+  display: 'Name',
+  rules: 'required|min_length[5]',
+}, {
+  name: 'username',
+  display: 'Username',
+  rules: 'required|min_length[6]'
+}, {
+  name: 'password',
+  display: 'Password',
+  rules: 'required'
+}], function(errors, event){
+    if(errors.length > 0){
+      event.preventDefault(); //prevent submission
+      var errorString = '';
+      var errorLength = errors.length;
+        for (var i = 0; i < errorLength; i++) {
+            errorString += errors[i].message + '<br />';
+            var errorID = errors[i].id;
+        }
+        console.log(errorString);
+        var div = document.getElementById('errorDiv');
+        div.innerHTML = errorString;
+        console.log("Text is: " + text);
+    }
+
+});
+</script>

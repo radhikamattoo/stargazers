@@ -1,13 +1,38 @@
+<script type="text/javascript" src="../../validate.min.js"></script>
 <h1> Create a list</h1>
 <h5> After you create your list, you can populate it with your observed exoplanets. </h5>
 <div class="form group">
-<form method="POST" action="">
+<form method="POST" action="" name='newlist'>
   <div class="form-group col-xs-4 col-md-offset-4">
     <label class='control-label'> Name: </label>
     <input class="form-control text-center" type="text" name="Name" placeholder="User Observed">
   </div>
+  <div id= 'errorDiv' class='error col-xs-4 col-md-offset-4'>
+  </div>  <br><br>
   <div class="form-group col-xs-4 col-md-offset-4">
     <button class="btn btn-primary" type="submit">Create List</button<br> <br>
   </div>
 </form>
 </div>
+
+<script>
+var validator = new FormValidator('newlist', [{
+  name: 'Name',
+  display: 'List Name',
+  rules: 'required|min_length[4]',
+}], function(errors, event){
+    if(errors.length > 0){
+      event.preventDefault(); //prevent submission
+      var errorString = '';
+      var errorLength = errors.length;
+        for (var i = 0; i < errorLength; i++) {
+            errorString += errors[i].message + '<br />';
+            var errorID = errors[i].id;
+        }
+        console.log(errorString);
+        var div = document.getElementById('errorDiv');
+        div.innerHTML = errorString;
+        console.log("Text is: " + text);
+    }
+});
+</script>

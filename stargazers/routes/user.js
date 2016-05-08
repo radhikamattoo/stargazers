@@ -27,6 +27,13 @@ router.get("/stargazers/:username/logout", function(req, res, next){
   res.redirect('/');
 });
 
+//----------------------------------- (GET) HELP PAGE----------------------------------//
+router.get('/stargazers/:username/help', function(req, res, next){
+  res.render('help', {username:req.params.username});
+});
+
+
+
 //----------------------------(GET) NASA Archive List----------------------------//
 router.get('/stargazers/:username/nasa/archive', function(req, res, next){
   //set up table of NASA Exoplanets and GET form for filtering exoplanets

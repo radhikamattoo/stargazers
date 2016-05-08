@@ -18,15 +18,27 @@
       Temperature (K): <input  class="form-control text-center" type="number" name="temperature" id='temperature' placeholder="4742">
     </div>
     <div class="form-group col-xs-4 col-md-offset-4">
-      <button class="btn btn-primary" type="submit" value="Search" id='search'>Search!</button> <br>
+      <button class="btn btn-primary" type="submit" value="Search" id='search'>Search!</button> <br><br><br
     </div>
     <input type="hidden" value="{{username}}" name="username" id="username">
     <input type="hidden" value="{{listName}}" name="listName" id="listName">
     </form><br>
   </div>
   <div class="form-group col-xs-4 col-md-offset-4">
-    <p><a href="/stargazers/{{username}}" class="btn btn-secondary" role="button"> Back to Profile </a></p>
+    {{#if ownList}}
+      <p><a class="btn btn-primary" href="/stargazers/{{username}}/{{linkName}}/add"> Add Exoplanet </a></p>
+      {{#if list}}
+        {{#if nasaObserved}}
+          <p><a class="btn btn-primary" href="/stargazers/{{username}}/{{linkName}}/selectExoplanets"> Delete Exoplanet </a></p>
+        {{else}}
+          <p><a class="btn btn-primary" href="/stargazers/{{username}}/{{linkName}}/selectExoplanets"> Delete/Edit Exoplanet </a></p>
+        {{/if}}
+      {{/if}}
+      {{else}}
+        <p><a href="/stargazers/{{username}}" class="btn btn-secondary" role="button"> Back to Profile </a></p>
+    {{/if}}
   </div> <br><br><br>
+
 
   <table class="table table-bordered table-condensed table-nonfluid" align='center'>
     <thead class="thead-inverse">
@@ -94,17 +106,7 @@
   <br> <h4> You haven't added any exoplanets yet! </h4> <br>
 {{/if}}
 {{#if ownList}}
-  <p><a class="btn btn-primary" href="/stargazers/{{username}}/{{linkName}}/add"> Add Exoplanet </a></p>
-  {{#if list}}
-    {{#if nasaObserved}}
-      <p><a class="btn btn-primary" href="/stargazers/{{username}}/{{linkName}}/selectExoplanets"> Delete Exoplanet </a></p>
-    {{else}}
-      <p><a class="btn btn-primary" href="/stargazers/{{username}}/{{linkName}}/selectExoplanets"> Delete/Edit Exoplanet </a></p>
-    {{/if}}
-  {{/if}}
-  {{#unless list}}
   <div class="form-group col-xs-4 col-md-offset-4">
     <p><a href="/stargazers/{{username}}" class="btn btn-secondary" role="button"> Back to Profile </a></p>
   </div>
-  {{/unless}}
 {{/if}}

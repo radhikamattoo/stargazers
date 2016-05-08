@@ -26,6 +26,10 @@ router.get('/', function(req, res, next) {
     req.session.loggedOut = false;
     res.render('signUp', {error: "You have been logged out."});
   }else if(req.session.usernameTaken){
+    req.session.usernameTaken = false;
+    res.render('signUp', {error: "That username is taken. Please try another."});
+  }else if(req.session.notComplete){
+    req.session.notComplete = false;
     res.render('signUp', {error: "That username is taken. Please try another."});
   }else{
     res.render('signUp');
@@ -34,83 +38,78 @@ router.get('/', function(req, res, next) {
 
 //-------------------------(POST) HOME PAGE -------------------------------//
 router.post('/', function(req, res, next){
-  console.log("REQ.USER: ", req.user);
+  var userCheck = req.body.userCheck;
   var username = req.body.username;
   var password = req.body.password;
-  var userCheck = req.body.userCheck;
+  var name = req.body.name;
 
-  if(userCheck === "Sign Up"){ //New User; set up mongoose data
-    var name = req.body.name;
-    var user = new User({
-      name: name,
-      fb: false,
-      username: username,
-      password: password,
-    });
-
-    User.findOne({username:username}, function(err, foundUser){
-      if(foundUser){ //username taken!
-        req.session.usernameTaken = true;
-        res.redirect('/');
-      }else{
-        //save newly created user
-        user.save(function(err, user, count){
-          console.log("Saving new user id to the session");
-          req.session.userID = user._id;
-          if(err){ res.render('error', {error: err});}
-          else if(user === null){res.send("USER IS NULL."); return;}
-          //create the 2 default lists for each user
-          var d = new Date();
-          d = d.toString();
-          var nasaList = new List({
-            user: user._id,
-            name: "nasaObserved",
-            created: d
-          });
-          var userList = new List({
-            user: user._id,
-            name: "userObserved",
-            created: d
-          });
-
-          //save to lists collection
-          nasaList.save(function(err, list, count){
-            if(err){ res.render('error', {error: err});}
-            console.log("User for NASA list populated with id: " + list.user);
-          });
-          userList.save(function(err, list, count){
-            if(err){ res.render('error', {error: err});}
-            console.log("User for NASA list populated with id: " + list.user);
-          });
-          //save list id's for findOne
-          var nasaID = nasaList._id;
-          var userID = userList._id;
-
-          //populate list objects (i.e. populate user reference with new user)
-          List.findOne({_id : nasaID}).populate('user').exec(function(err, list){
-            if(err){ res.render('error', {error: err});}
-            console.log("User for NASA list populated");
-          });
-          List.findOne({_id : userID}).populate('user').exec(function(err, list){
-            if(err){ res.render('error', {error: err});}
-            console.log("User for User list populated");
-          });
-
-
-          //now reverse - save the 2 lists in the array of lists in the user schema
-          user.lists.push(nasaList);
-          user.lists.push(userList);
-          user.save(function(err, user, count){
-            if(err){ res.render('error', {error: err});}
-          });
-          req.session.username = username;
-          res.redirect('/stargazers/' + username);
-        });
-      }
+  var user = new User({
+    name: name,
+    fb: false,
+    username: username,
+    password: password,
   });
-  }else{ //Old user that clicked 'Login' button; redirect to new form
-    res.redirect('/login');
-  }
+
+  User.findOne({username:username}, function(err, foundUser){
+    if(foundUser){ //username taken!
+      req.session.usernameTaken = true;
+      res.redirect('/');
+    }else{
+      //save newly created user
+      user.save(function(err, user, count){
+        console.log("Saving new user id to the session");
+        req.session.userID = user._id;
+        if(err){ res.render('error', {error: err});}
+        else if(user === null){res.send("USER IS NULL."); return;}
+        //create the 2 default lists for each user
+        var d = new Date();
+        d = d.toString();
+        var nasaList = new List({
+          user: user._id,
+          name: "nasaObserved",
+          created: d
+        });
+        var userList = new List({
+          user: user._id,
+          name: "userObserved",
+          created: d
+        });
+
+        //save to lists collection
+        nasaList.save(function(err, list, count){
+          if(err){ res.render('error', {error: err});}
+          console.log("User for NASA list populated with id: " + list.user);
+        });
+        userList.save(function(err, list, count){
+          if(err){ res.render('error', {error: err});}
+          console.log("User for NASA list populated with id: " + list.user);
+        });
+        //save list id's for findOne
+        var nasaID = nasaList._id;
+        var userID = userList._id;
+
+        //populate list objects (i.e. populate user reference with new user)
+        List.findOne({_id : nasaID}).populate('user').exec(function(err, list){
+          if(err){ res.render('error', {error: err});}
+          console.log("User for NASA list populated");
+        });
+        List.findOne({_id : userID}).populate('user').exec(function(err, list){
+          if(err){ res.render('error', {error: err});}
+          console.log("User for User list populated");
+        });
+
+
+        //now reverse - save the 2 lists in the array of lists in the user schema
+        user.lists.push(nasaList);
+        user.lists.push(userList);
+        user.save(function(err, user, count){
+          if(err){ res.render('error', {error: err});}
+        });
+        req.session.username = username;
+        res.redirect('/stargazers/' + username);
+      });
+    }
+  });
 });
 
 //-------------------------(GET) LOGIN----------------------------//

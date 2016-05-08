@@ -1,21 +1,30 @@
 <div>
   <p><a href="/stargazers/{{username}}/logout" class="btn btn-primary pull-left" role="button" id="logout"> Logout </a></p><br>
 </div><br>
-<h1> {{header}} </h1>
-<h3> Welcome back to Stargazer's!</h3>
+<div>
+  <h1> {{header}} </h1>
+  <h3> Welcome back to Stargazer's!</h3>
+</div><br><br>
 
-<div id="lists">
-  <h4> Your Exoplanet Lists </h4>
+<div>
+  <h4> Your Exoplanet Lists </h4><br>
   <p> Click on a list to see/edit its contents </p>
+</div>
+  <div id="lists">
 <ul class="list-group container">
   {{#each lists}}
   <div>
   <li class="col-md-2 col-md-offset-5"> <a class="list-group-item" href= "{{link}}" role="button"> {{name}} </a></li><br><br><br>
   </div>
   {{/each}}
-</ul>
+</ul><br>
+<div>
 <h4> Click <a href="/stargazers/{{username}}/newList" > here </a> to create a new list </h4>
-
+</div><br>
 </div>
-
+<div>
 <p><a href="/stargazers/{{username}}/nasa/archive" class="btn btn-primary" role="button"> NASA Archive </a></p>
+</div>
+<div>
+  <p><a href="/stargazers/{{username}}/help" class="btn btn-primary" role="button" id="help"> Need Help? </a></p><br>
+</div>

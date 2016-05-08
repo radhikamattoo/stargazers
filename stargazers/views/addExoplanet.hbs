@@ -1,13 +1,14 @@
+<script type="text/javascript" src="../../../validate.min.js"></script>
 <h1> Add an Exoplanet to {{name}} </h1>
 <p> NOTE: A red asterisk indicates a required field. </p>
 <div class="form group">
-<form method="POST" action="">
+<form method="POST" action="" name='add'>
   <div class="form-group col-xs-4 col-md-offset-4">
     <label class='control-label'> Host Name: </label>
     <input class="form-control text-center" type="text" name="HostName" placeholder="11 Com">
   </div>
   <div class="form-group required col-xs-4 col-md-offset-4">
-    <label class='control-label'> Classification: </label>
+    <label class='control-label'> Classification (m, k, g, h, a, b, o): </label>
     <input class="form-control text-center" type="text" name="PlanetLetter" placeholder="B">
   </div>
   <div class="form-group col-xs-4 col-md-offset-4">
@@ -19,7 +20,7 @@
     <input class="form-control text-center" type="Number" step="any" name="NumPlanetsInSystem" placeholder="1">
   </div>
   <div class="form-group required col-xs-4 col-md-offset-4">
-    <label class='control-label'>Orbital Period: </label>
+    <label class='control-label'>Orbital Period (Earth Days): </label>
     <input class="form-control text-center" type="Number" step="any" name="OrbitalPeriod" placeholder="326.03">
   </div>
   <div class="form-group col-xs-4 col-md-offset-4">
@@ -94,6 +95,8 @@
     <label class='control-label'>Stellar Radius: </label>
     <input class="form-control text-center" type="Number" step="any" name="StellarRadius" placeholder="19">
   </div>
+  <div id= 'errorDiv' class='error col-xs-4 col-md-offset-4'>
+  </div>  <br><br>
   <div class="form-group col-xs-4 col-md-offset-4">
     <button class="btn btn-primary" type="submit">Add Planet</button<br> <br>
     </div>
@@ -102,3 +105,65 @@
 <div class="col-xs-4 col-md-offset-4">
   <p><a href="/stargazers/{{username}}/{{listName}}" class="btn btn-secondary" role="button"> Back to List </a></p>
 </div>
+<script>
+var validator = new FormValidator('add', [{
+  name: 'HostName',
+  display: 'Host Name',
+  rules: 'max_length[16]',
+}, {
+  name: 'PlanetLetter',
+  display: 'Classification',
+  rules: 'required|max_length[1]|alpha|callback_check_Letter'
+}, {
+  name: 'NumPlanetsInSystem',
+  display: 'Number of Planets in System',
+  rules: 'required'
+},{
+  name: 'OrbitalPeriod',
+  display: 'Orbital Period',
+  rules: 'required'
+}, {
+  name: 'Distance',
+  rules: 'required'
+}, {
+  name: 'TemperatureK',
+  display: 'Temperature',
+  rules: 'required'
+}, {
+  name: 'StellarMass',
+  display: 'Stellar Mass',
+  rules: 'required'
+}, {
+  name: 'StellarRadius',
+  display: 'Stellar Radius',
+  rules: 'required'
+}], function(errors, event){
+
+    if(errors.length > 0){
+      event.preventDefault(); //prevent submission
+      var errorString = '';
+      var errorLength = errors.length;
+        for (var i = 0; i < errorLength; i++) {
+            errorString += errors[i].message + '<br />';
+            var errorID = errors[i].id;
+        }
+        console.log(errorString);
+        var div = document.getElementById('errorDiv');
+        div.innerHTML = errorString;
+        console.log("Text is: " + text);
+    }
+});
+validator.registerCallback('check_Letter', function(value) {
+    //(M, K, G, F, A, B, O)
+    if (value === 'M' || value === 'K' || value === 'G' || value === 'F'
+    || value === 'A' || value === 'B' || value === 'O') {
+        return true;
+    }
+
+    return false;
+})
+.setMessage('check_Letter', 'Classification must be a single capital letter: M, K, G, F, A, B, or O');
+
+
+
+</script>

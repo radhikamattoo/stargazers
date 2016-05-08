@@ -1,5 +1,6 @@
 body{
   background: url('http://static.ddmcdn.com/gif/blogs/dnews-files-2015-01-hubble-galaxy-wide-150130-jpg.jpg');
+  /*http://static.ddmcdn.com/gif/blogs/dnews-files-2015-01-hubble-galaxy-wide-150130-jpg.jpg*/
   color:white;
 }
 h1, h2, h4{
@@ -53,7 +54,9 @@ li{
     background: #0099cc;
     color: #ffffff;
 }
-
+input{
+  color:black;
+}
 .btn-primary:hover {
     background-color: transparent;
     color: #0099cc;
@@ -86,7 +89,7 @@ li{
   display: none;
 }
 
-#logout{
+#logout, #help{
   padding: 4px 8px;
   font-weight: 700;
   letter-spacing: 1px;
@@ -95,6 +98,9 @@ li{
 }
 #logout:hover{
   padding: 2px 6px;
+}
+#name{
+  color: #0099cc;
 }
 ::-webkit-input-placeholder {
   text-align: center;
