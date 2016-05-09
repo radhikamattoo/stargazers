@@ -98,12 +98,12 @@ passport.use(new FacebookStrategy({
 			      d = d.toString();
 			      var nasaList = new List({
 			        user: newUser._id,
-			        name: "Nasa Observed",
+			        name: "nasaObserved",
 			        created: d.toString()
 			      });
 			      var userList = new List({
 			        user: newUser._id,
-			        name: "User Observed",
+			        name: "userObserved",
 			        created: d
 			      });
 

@@ -90,7 +90,7 @@ router.post('/stargazers/:username/:listName/add', function(req, res, next){
         res.redirect('/stargazers/' + username + '/' + listName);
       }else{
         //found a NASA exoplanet matching; add it to the user's NASA list
-        var planetID = planet._id.toString();
+        var planetID = planet._id;
         var id = req.session.userID;
         List.findOne({user: ObjectId(id), name: listName}, function(err, list){
           //make sure we don't add a duplicate
@@ -131,6 +131,7 @@ router.post('/stargazers/:username/:listName/add', function(req, res, next){
   };
   Exoplanet.findOne(NASACheck, function(err, planet){
       if(planet){
+        console.log("planet is : " + planet);
         var planetID = planet._id.toString();
         console.log("Matches! Add exoplanet to NASA Observed list ");
           var id = req.session.userID;
