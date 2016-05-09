@@ -22,14 +22,11 @@ router.get('/', function(req, res, next) {
     res.render('signUp', {error: "You haven't logged in or signed up!"});
   }else if(req.session.username){ //already logged in, redirect straight to profile page
     res.redirect('/stargazers/' + req.session.username);
-  }else if(req.session.loggedOut){
+  }else if(req.session.loggedOut){ //clicked the logout button on profile page
     req.session.loggedOut = false;
     res.render('signUp', {error: "You have been logged out."});
-  }else if(req.session.usernameTaken){
+  }else if(req.session.usernameTaken){ //tried signing up with taken username
     req.session.usernameTaken = false;
-    res.render('signUp', {error: "That username is taken. Please try another."});
-  }else if(req.session.notComplete){
-    req.session.notComplete = false;
     res.render('signUp', {error: "That username is taken. Please try another."});
   }else{
     res.render('signUp');
@@ -43,6 +40,7 @@ router.post('/', function(req, res, next){
   var password = req.body.password;
   var name = req.body.name;
 
+  //can safely construct new User object thanks to validate.js
   var user = new User({
     name: name,
     fb: false,
@@ -50,6 +48,7 @@ router.post('/', function(req, res, next){
     password: password,
   });
 
+  //check that username isn't taken, then save user
   User.findOne({username:username}, function(err, foundUser){
     if(foundUser){ //username taken!
       req.session.usernameTaken = true;
@@ -57,10 +56,10 @@ router.post('/', function(req, res, next){
     }else{
       //save newly created user
       user.save(function(err, user, count){
-        console.log("Saving new user id to the session");
         req.session.userID = user._id;
         if(err){ res.render('error', {error: err});}
         else if(user === null){res.send("USER IS NULL."); return;}
+
         //create the 2 default lists for each user
         var d = new Date();
         d = d.toString();
@@ -98,19 +97,20 @@ router.post('/', function(req, res, next){
           console.log("User for User list populated");
         });
 
-
         //now reverse - save the 2 lists in the array of lists in the user schema
         user.lists.push(nasaList);
         user.lists.push(userList);
+
         user.save(function(err, user, count){
           if(err){ res.render('error', {error: err});}
+          req.session.username = username;
+          res.redirect('/stargazers/' + username);
         });
-        req.session.username = username;
-        res.redirect('/stargazers/' + username);
-      });
-    }
-  });
-});
+
+      }); //end user save
+    }//end else (username isn't taken)
+  }); //end user find One
+}); //end router POST
 
 //-------------------------(GET) LOGIN----------------------------//
 router.get('/login', function(req, res, next){
@@ -175,41 +175,44 @@ router.get('/stargazers/:username', function(req, res, next){
   //get user's full name and their Lists via mongoose
 
   var username = req.params.username;
+  console.log(req.session.userID + "    " +  req.session.username);
   //they haven't signed in!! they can't do that!
   if(req.session.userID === undefined || req.session.username === undefined){
     req.session.invalidURL = true;
     res.redirect('/');
-  }
+  }else{
+    User.findOne({_id:ObjectId(req.session.userID)}, function(err, user){
 
-  User.findOne({_id:ObjectId(req.session.userID)}, function(err, user){
-    var displayName = user.name.charAt(0).toUpperCase() + user.name.slice(1);
-    var header = "Hello, " + displayName + ".";
-    var id = user._id;
-    //find all lists associated with user id
-    List.find({user: id}, function(err, lists, count){
-      var listObject = {};
-      //parse lists to display names and links nicely in hbs
-      for(var i = 0; i < lists.length; i++){
-        var humanReadableListName = lists[i].name
-        // insert a space between lower & upper
-        .replace(/([a-z])([A-Z])/g, '$1 $2')
-        // space before last upper in a sequence followed by lower
-        .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
-        // uppercase the first character
-        .replace(/^./, function(str){ return str.toUpperCase(); });
+      //construct 'hello' message for profile
+      var displayName = user.name.charAt(0).toUpperCase() + user.name.slice(1);
+      var header = "Hello, " + displayName + ".";
+      var id = user._id;
 
-        console.log("Uncamelcased list name:" + humanReadableListName);
+      //find all lists associated with user id
+      List.find({user: id}, function(err, lists, count){
+        var listObject = {};
 
-        listObject[i] = {
-          link: '/stargazers/'+ username + "/" + lists[i].name, //camel cased
-          name: humanReadableListName //uncamelcased
-        };
-      }
+        //parse lists to display names and links nicely in hbs
+        for(var i = 0; i < lists.length; i++){
+          var humanReadableListName = lists[i].name //uncamel case list names
+          // insert a space between lower & upper
+          .replace(/([a-z])([A-Z])/g, '$1 $2')
+          // space before last upper in a sequence followed by lower
+          .replace(/\b([A-Z]+)([A-Z])([a-z])/, '$1 $2$3')
+          // uppercase the first character
+          .replace(/^./, function(str){ return str.toUpperCase(); });
 
-      res.render('profile', {header:header, lists:listObject, username:username});
+          listObject[i] = {
+            link: '/stargazers/'+ username + "/" + lists[i].name, //camel cased
+            name: humanReadableListName //uncamelcased
+          };
+        }
 
-    });//List find
-  });//User findOne
+        res.render('profile', {header:header, lists:listObject, username:username});
+
+      });//List find
+    });//User findOne
+  }//end else
 }); //router.get
 
 

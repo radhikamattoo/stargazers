@@ -92,6 +92,8 @@ router.post('/stargazers/:username/:listName/add', function(req, res, next){
         //found a NASA exoplanet matching; add it to the user's NASA list
         var planetID = planet._id;
         var id = req.session.userID;
+
+
         List.findOne({user: ObjectId(id), name: listName}, function(err, list){
           //make sure we don't add a duplicate
           for(var i = 0; i < list.planets.length; i++){
@@ -102,21 +104,23 @@ router.post('/stargazers/:username/:listName/add', function(req, res, next){
               req.session.duplicate = true;
               break;
             }
-          }
+          }//end duplicate check for loop
+
           if(req.session.duplicate){
             res.redirect('/stargazers/' + username + "/" + listName);
-          }else{
+          }else{ //safe to add to list
             console.log("PUSHING PLANET: " + planet);
             list.planets.push(planet);
             list.save(function(err){
               console.log("exoplanet added");
               req.session.newPlanet = true;
               res.redirect('/stargazers/' + username + "/" + listName);
-            });
-          }
-        });
-      }
-    });
+            }); //end list save
+          } //end else
+        }); //end list findone
+      }//end else
+    }); //end exoplanet findOne
+
   }else{ //adding to user list
 
   //here we would check if it's in the NASA list, or a planet in our system. If it is, and this list is not
@@ -130,13 +134,13 @@ router.post('/stargazers/:username/:listName/add', function(req, res, next){
     StellarRadius: StellarRadius
   };
   Exoplanet.findOne(NASACheck, function(err, planet){
-      if(planet){
-        console.log("planet is : " + planet);
+      if(planet){ //planet is a NASA observed exoplanet
         var planetID = planet._id.toString();
         console.log("Matches! Add exoplanet to NASA Observed list ");
           var id = req.session.userID;
           List.findOne({user: ObjectId(id), name: 'nasaObserved'}, function(err, list){
             console.log("Adding to list" + list);
+
             //make sure we don't add a duplicate
             for(var i = 0; i < list.planets.length; i++){
               var listPlanet = list.planets[i];
@@ -146,11 +150,11 @@ router.post('/stargazers/:username/:listName/add', function(req, res, next){
                 req.session.duplicate = true;
                 break;
               }
-            }
+            }//end duplicate check for loop
 
             if(req.session.duplicate){
               res.redirect('/stargazers/' + username + "/" + listName);
-            }else{
+            }else{ //safe to add
               list.planets.push(planet);
               list.save(function(err){
                 console.log("exoplanet added");
@@ -201,8 +205,7 @@ router.post('/stargazers/:username/:listName/add', function(req, res, next){
             var planetID = exoplanet._id;
             if(err){ res.render('error', {error: err});}
             var id = req.session.userID;
-            console.log('querying for list name: ' +listName);
-            console.log('with name with id of: ' + id);
+
             List.findOne({user: ObjectId(id), name: listName}, function(err, list){
               list.planets.push(exoplanet);
               list.save(function(err){
@@ -235,10 +238,14 @@ router.get('/stargazers/:username/:listName/edit', function(req, res, next){
 
   var checkedPlanets = req.session.checkedPlanets;
   console.log("In the edit router, checkedPlanets is: " + checkedPlanets);
+
+  //the form gives us the data separated by underscores, so simply split the string
   var planetData = checkedPlanets.split("_");
   var PlanetLetter = planetData[0];
   var Distance = Number(planetData[1]);
   var TemperatureK = Number(planetData[2]);
+
+  //construct a search object to query the exoplanets collection
   var searchObject = {
     PlanetLetter: PlanetLetter,
     Distance: Distance,
@@ -246,7 +253,7 @@ router.get('/stargazers/:username/:listName/edit', function(req, res, next){
   };
   //find planets and render edit form with value= the values already in object
   Exoplanet.findOne(searchObject, function(err, planet){
-    if(!planet){res.render("Planet found is null");}
+    if(!planet){res.send("Planet found is null");}
     else{
       console.log("Found planet: " + planet);
       var sendName = listName  // insert a space between lower & upper
@@ -256,11 +263,12 @@ router.get('/stargazers/:username/:listName/edit', function(req, res, next){
         // uppercase the first character
         .replace(/^./, function(str){ return str.toUpperCase(); });
 
+      //render edit page
       res.render('editExoplanet', {planet: planet, name:sendName,
         username: username, listName: listName});
-    }
-  });
-});
+    } //end else
+  });//end exoplanet find one
+}); //end POST router
 
 //----------------------------------- (POST) EDIT PLANET----------------------------------//
 router.post('/stargazers/:username/:listName/edit', function(req, res, next){
@@ -303,16 +311,15 @@ router.post('/stargazers/:username/:listName/edit', function(req, res, next){
     //now have list object; pull exoplanet and save it
     list.planets.forEach(function(planet){
       var planetID = planet._id.toString();
-      console.log('mongoose planet id: ' + planetID);
-      console.log('form id: ' + _id);
-      if(planetID === _id){ //if it matches the hidden form value, replace
-        console.log('matches id');
-        list.planets.id(planet._id).remove(); //remove from list
+
+      //if it matches the hidden form value, replace
+      if(planetID === _id){
+        //remove from list
+        list.planets.id(planet._id).remove();
 
         //remove from database
         Exoplanet.find({_id: ObjectId(planet._id)}).remove().exec();
 
-        console.log("removed previous planet");
         var replacement = new Exoplanet(updatedObject);
         replacement.save(function(err){
           list.planets.push(replacement);
@@ -323,7 +330,7 @@ router.post('/stargazers/:username/:listName/edit', function(req, res, next){
             res.redirect('/stargazers/' + username +'/' + listName +'/');
           }); //end list save
         }); //end replacement save
-      }
+      }//end if
     });//end forEach
   });//end list findone
 });
