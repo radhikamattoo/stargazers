@@ -9,12 +9,11 @@ A user can sign up and create a list of their favorite exoplanets by either ente
 
 Since many fields from the NASA archive are very difficult for regular observers to figure out without expensive equipment, I've kept only 8 fields as required (the rest will be there, but optional). These fields are the main criteria for matching a planet with the NASA archive:
 
-* Planet Letter (D, H, J, K, L, M, N, T, Y)
+* Planet Letter (b, c, d, e, f, g, h, i, j)
 * Number of Planets in System
 * Orbital Period
 * Distance
 * Temperature
-* Density
 * Stellar Mass
 * Stellar Radius
 
@@ -33,6 +32,7 @@ There will be 3 Mongoose schemas
 
 1. User
   * Username/password
+  * Boolean for if they signed up via Facebook
   * At minimum, there are 2 lists:
     * List of observed exoplanets in NASA archive
     * List of observed exoplanets not in NASA archive
@@ -63,6 +63,7 @@ There will be 3 Mongoose schemas
   * Dec (String)
   * Dec
   * Distance **REQUIRED**
+  * Density
   * Optical Magnitude
   * Optical Magnitude Band
   * Temperature (Kelvin) **REQUIRED**
@@ -104,6 +105,7 @@ var User = {
   password: 'Given by FB',
   Lists: [{name: 'observedNASA', ...}, {name: 'observedSELF', ...}]
 }
+
 //User can add more lists if they want to
 // EX: I want an additional list of all B-classified exoplanets in my profile, because they're my favorite
 //So after I add the list, my object would look like this:
@@ -151,6 +153,6 @@ Note: Very basic, doesn't show all functionality the actual app will have.
     * I'm going to be using Passport for user authentication
     * Will do Facebook login/signup or regular email&password login/signup
 * (2 points) Perform client side form validation using a JavaScript library
-    * I'll be using Parsley http://parsleyjs.org/
+    * I'll be using validate.js http://rickharrison.github.io/validate.js/
 * (1 point) Use a CSS framework throughout your site
     * Bootstrap!
