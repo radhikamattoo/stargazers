@@ -1,6 +1,8 @@
 
 # Stargazer's Collection
 
+[![Build Status](https://travis-ci.org/radhikamattoo/stargazers.svg?branch=master)](https://travis-ci.org/radhikamattoo/stargazers)
+
 ## Overview
 
 I'm personally obsessed with space; when I was younger, I'd love looking at planets and stars from a telescope in my backyard - why not make a web app that helps keep track of all your favorite exoplanet?
