@@ -29,6 +29,12 @@ var list = require('./routes/list');
 
 var app = express();
 
+// Retrieve client ID and Secret from config
+require('dotenv').config();
+const clientID = process.env.clientID;
+const clientSecret = process.env.clientSecret;
+
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -49,8 +55,8 @@ app.use(function(req, res, next) {
   next();
 });
 
-//Set up strategies for user authentication:
 
+//Set up strategies for user authentication:
 //regular username-password login
 passport.use(new LocalStrategy(
   function(username, password, done) {
@@ -69,8 +75,8 @@ passport.use(new LocalStrategy(
 
 //facebook login
 passport.use(new FacebookStrategy({
-    clientID: 1560296170929426,
-    clientSecret: '226542e3a1d276aab0759b3e23085a81',
+    clientID: clientID,
+    clientSecret: clientSecret,
     callbackURL: "http://localhost:3000/auth/facebook/callback",
 		profileFields: ['id', 'name']
   },

@@ -26,6 +26,28 @@ Based on this Confirmed Exoplanet Archive:
 
 http://exoplanetarchive.ipac.caltech.edu/cgi-bin/TblView/nph-tblView?app=ExoTbls&config=planets
 
+Background image taken from:
+
+https://downloops.com/stock-footage/starfield-stars-universe-flyby-motion-loop/
+
+## Installation / Setup
+
+After you clone the repository, you will need a Facebook App ID and Secret in order to run this app locally. Go to https://developers.facebook.com/apps/ and create an app to retrieve your app ID/Secret.
+
+Once you have this, create a `.env` file in the root directory with this structure:
+
+```
+clientID=CLIENTID
+clientSecret=CLIENTSECRET
+```
+
+This will allow the `app.js` file to correctly setup Passport Facebook for login/signup. Next:
+
+```
+npm install
+node bin/www
+```
+The app will run from `localhost:3000`
 
 
 ## Data Model
